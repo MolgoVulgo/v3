@@ -3,6 +3,7 @@ const path = require('path');
 const dotenv = require('dotenv');
 const dockerService = require("../services/dockerService");
 const monitorsService = require("../services/monitorsService");
+const cache = require('../utils/cache');
 
 dotenv.config();
 const configPath = path.join(__dirname, '../config/config.json');
@@ -280,46 +281,61 @@ function startPeriodicCheck(wss) {
  */
 async function getAllServersStatus(req, res) {
     try {
-        const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
-        const servers = config.SERVERS;
-
-        const result = {};
-
-        // Host stats (CPU + Memory global usage)
-        const hostStats = await dockerService.getDockerStats();
-        result.HOST = hostStats;
-
-        for (const server of servers) {
-            if (!server.ENABLED) continue;
-
-            // Get cached state
-            const stateInfo = monitorsService.getCachedState(server.SERVER_NAME);
-
-            // Get container stats only if running
-            let containerStats = { CPU_USAGE: "N/A", MEMORY_USAGE: "N/A" };
-            if (stateInfo.state === "running") {
-                containerStats = await dockerService.getServerStats(server.SERVER_NAME);
-            }
-
-            result[server.SERVER_NAME] = {
-                STATUS: {
-                    state: stateInfo.state,
-                    phase: stateInfo.phase
-                },
-                PLAYERS: stateInfo.players || 0,
-                MAX_PLAYERS: server.MAX_PLAYERS,
-                CPU_USAGE: containerStats.CPU_USAGE,
-                MEMORY_USAGE: containerStats.MEMORY_USAGE
-            };
-        }
-
+        const result = await fetchAllServersStatus();
+        console.debug(result);
         res.json(result);
     } catch (err) {
-        console.error("❌ Error in getAllServersStatus:", err.message);
-        res.status(500).json({ error: "Failed to fetch servers status." });
+        console.error("❌ Error in /api/servers/status/all:", err.message);
+        // res.status(500).json({
+        //     message: "Internal server error while fetching server stats."
+        // });
     }
 }
 
+/**
+ * Fetches the status and statistics of all servers, including those that are stopped,
+ * and merges them with any available runtime stats from the cache.
+ *
+ * @returns {Promise<Object>} - Returns an object containing:
+ *                              - servers: An object with each server's status and stats.
+ *                              - hostStats: Host machine stats from cache.
+ * @throws {Error} - Throws error if reading the configuration file fails.
+ */
+async function fetchAllServersStatus() {
+    try {
+        // Read the full list of servers from config
+        const configData = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+        const allServers = configData.SERVERS;
+        const serversWithStats = {};
+
+        allServers.forEach(server => {
+            const serverName = server.SERVER_NAME;
+
+            // Retrieve server status from cache (default to running: false if not found)
+            const serverStatus = cache.serversStatus[serverName] || { running: false };
+
+            // Retrieve container stats if available
+            const containerStat = Object.values(cache.containersStats).find(stat =>
+                stat.name.includes(serverName)
+            );
+
+            // Merge all data
+            serversWithStats[serverName] = {
+                ...serverStatus,
+                CPU_USAGE: containerStat ? containerStat.CPU_USAGE : "N/A",
+                MEMORY_USAGE: containerStat ? containerStat.MEMORY_USAGE : "N/A"
+            };
+        });
+
+        return {
+            servers: serversWithStats,
+            hostStats: cache.hostStats
+        };
+    } catch (error) {
+        console.error("❌ Error in fetchAllServersStatus:", error.message);
+        throw error; // Propagate error to be caught by caller
+    }
+}
 
 /**
  * Broadcasts server status updates via WebSocket.
@@ -352,4 +368,5 @@ module.exports = {
     stopServer,
     restartServer,
     getAvailableMaps,
+    fetchAllServersStatus
 };

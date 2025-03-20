@@ -41,8 +41,8 @@ app.use(express.static(path.join(__dirname, 'public'))); // Serve static files
  * @param {express.Response} res - Express response object.
  */
 app.get('/', async (req, res) => {
-    const servers = await serverController.getAllServersStatus();
-    res.render('index', { servers });
+    const statusData = await serverController.fetchAllServersStatus();
+    res.render('index', { servers: statusData.servers, hostStats: statusData.hostStats });
 });
 
 /**

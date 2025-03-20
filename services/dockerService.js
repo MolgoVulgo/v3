@@ -1,4 +1,6 @@
 const fs = require("fs");
+const http = require('http');
+const os = require('os');
 const { execSync } = require("child_process");
 const path = require("path");
 const configPath = path.join(__dirname, "..", "config", "config.json");
