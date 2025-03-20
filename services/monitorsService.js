@@ -145,7 +145,7 @@ function monitorServerState(serverName) {
  */
 function stopServerDueToFailure(serverName) {
     console.log(`[FAILURE] Server ${serverName} failed to start within 5 minutes, stopping...`);
-    dockerService.stopServer(serverName);
+    dockerService.executeStopServer(serverName);
     uiService.notifyUser(`Server ${serverName} failed to start and was stopped automatically.`, "danger");
 }
 

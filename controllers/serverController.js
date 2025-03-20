@@ -49,11 +49,13 @@ function getServers(req, res) {
  */
 function getServerByName(req, res) {
     try {
+        
+        console.debug(req.params);
         const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
         const server = config.SERVERS.find(s => s.SERVER_NAME === req.params.serverName);
 
         if (!server) {
-            return res.status(404).json({ error: "Server not found" });
+            return res.status(404).json({ error: "Server not found - getServerByName" });
         }
 
         res.json(server);
@@ -118,7 +120,7 @@ function updateServer(req, res) {
         const serverIndex = config.SERVERS.findIndex(s => s.SERVER_NAME === req.params.serverName);
 
         if (serverIndex === -1) {
-            return res.status(404).json({ error: "Server not found" });
+            return res.status(404).json({ error: "Server not found - updateServer" });
         }
 
         config.SERVERS[serverIndex] = { ...config.SERVERS[serverIndex], ...req.body };
@@ -143,7 +145,7 @@ function deleteServer(req, res) {
         const serverName = req.params.serverName;
 
         if (!config.SERVERS.some(server => server.SERVER_NAME === serverName)) {
-            return res.status(404).json({ error: "Server not found" });
+            return res.status(404).json({ error: "Server not found - deleteServer" });
         }
 
         config.SERVERS = config.SERVERS.filter(server => server.SERVER_NAME !== serverName);
@@ -182,7 +184,7 @@ async function startServer(req, res) {
         const server = config.SERVERS.find(s => s.SERVER_NAME === req.params.serverName);
 
         if (!server) {
-            return res.status(404).json({ error: "Server not found" });
+            return res.status(404).json({ error: "Server not found - startServer" });
         }
 
         console.log(server.SERVER_NAME);
@@ -227,7 +229,7 @@ async function restartServer(req, res) {
         const server = getServerConfig(serverName);
 
         if (!server) {
-            return res.status(404).json({ error: "Server not found" });
+            return res.status(404).json({ error: "Server not found - restartServer" });
         }
 
         await dockerService.executeRestartServer(server);
@@ -249,13 +251,19 @@ async function restartServer(req, res) {
  * @returns {void} Sends a JSON response with server status.
  */
 async function getStatus(req, res) {
+    const { serverName } = req.params;
     try {
-        const serverName = req.params.serverName;
-        const status = dockerService.isServerRunning(serverName); // Returns: off / startup / running
-        res.json({ status });
-    } catch (error) {
-        console.error("Error checking server status:", error);
-        res.status(500).json({ error: "Failed to get server status" });
+        const statusInfo = await dockerService.isServerRunning(serverName);
+
+        res.json({
+            server: serverName,
+            status: statusInfo.status,
+            details: statusInfo.details
+        });
+
+    } catch (err) {
+        console.error(`❌ Error fetching status for ${serverName}:`, err.message);
+        res.status(500).json({ error: "Failed to get server status." });
     }
 }
 
@@ -268,7 +276,7 @@ function startPeriodicCheck(wss) {
     if (intervalId) clearInterval(intervalId);
 
     intervalId = setInterval(async () => {
-        const serversStatus = await getAllServersStatus();
+        const serversStatus = await fetchAllServersStatus();
         broadcastServerUpdate(wss, serversStatus);
     }, 10000); // Interval in ms (10 sec)
 }
@@ -278,17 +286,17 @@ function startPeriodicCheck(wss) {
  * Returns the status and stats of all servers + host stats.
  * @param {Object} req - Express request object.
  * @param {Object} res - Express response object.
- */
+*/
 async function getAllServersStatus(req, res) {
     try {
-        const result = await fetchAllServersStatus();
+        //const result = await fetchAllServersStatus();
         console.debug(result);
         res.json(result);
     } catch (err) {
         console.error("❌ Error in /api/servers/status/all:", err.message);
-        // res.status(500).json({
-        //     message: "Internal server error while fetching server stats."
-        // });
+        res.status(500).json({
+            message: "Internal server error while fetching server stats."
+        });
     }
 }
 

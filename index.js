@@ -81,10 +81,10 @@ app.get("/templates/:filename", (req, res) => {
 app.get('/api/servers', serverController.getServers);
 
 // POST add a new server
-app.post('/api/servers', serverController.addServer);
+//app.post('/api/servers', serverController.addServer);
 
 // DELETE server by name
-app.delete('/api/servers/:serverName', serverController.deleteServer);
+//app.delete('/api/servers/:serverName', serverController.deleteServer);
 
 // GET specific server details
 app.get('/api/servers/:serverName', serverController.getServerByName);
@@ -96,16 +96,16 @@ app.put('/api/servers/:serverName', serverController.updateServer);
 app.post("/api/servers/:serverName/start", serverController.startServer);
 
 // (Optional GET route for start, if used by client)
-app.get("/api/servers/:serverName/start", serverController.startServer);
+//app.get("/api/servers/:serverName/start", serverController.startServer);
 
 // POST stop server
 app.post("/api/servers/:serverName/stop", serverController.stopServer);
 
 // POST restart server
-app.post("/api/servers/:serverName/restart", serverController.restartServer);
+//app.post("/api/servers/:serverName/restart", serverController.restartServer);
 
 // GET server status
-app.get("/api/servers/:serverName/status", serverController.getStatus);
+//app.get("/api/servers/:serverName/status", serverController.getStatus);
 
 // GET all server status
 app.get("/api/servers/status", serverController.getAllServersStatus);
@@ -131,6 +131,6 @@ app.get('/api/maps', serverController.getAvailableMaps);
  */
 const PORT = config.webSocketPort || 8080;
 server.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+    console.log(`Server running on port http://localhost:${PORT}`);
     serverController.startPeriodicCheck(wss);
 });
