@@ -1,0 +1,38 @@
+[
+    {
+      "keyword": "Log file open",
+      "state": "Log file opened & Memory stats"
+    },
+    {
+      "keyword": "ARK Version / LogCFCore",
+      "state": "CFCore initialization & OS detection"
+    },
+    {
+      "keyword": "No need to update existing mod",
+      "state": "Mod update verification"
+    },
+    {
+      "keyword": "Starting to download",
+      "state": "Mod download started"
+    },
+    {
+      "keyword": "Mod valid",
+      "state": "Mod validation completed"
+    },
+    {
+      "keyword": "UShooterEngine::LoadGameMods",
+      "state": "Game mods loading"
+    },
+    {
+      "keyword": "Server Initializing with BattlEye",
+      "state": "BattlEye Anti-Cheat initialization"
+    },
+    {
+      "keyword": "Server: \"(.*?)\" has successfully started!",
+      "state": "Server successfully started"
+    },
+    {
+      "keyword": "Server has completed startup and is now advertising for join.",
+      "state": "Server startup completed & advertising"
+    }
+  ]

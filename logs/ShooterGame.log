@@ -1,0 +1,354 @@
+﻿[2025.03.11-08.16.29:053][  0]Log file open, 03/11/25 09:16:29
+[2025.03.11-08.16.29:053][  0]LogMemory: Platform Memory Stats for WindowsServer
+[2025.03.11-08.16.29:053][  0]LogMemory: Process Physical Memory: 422.25 MB used, 464.82 MB peak
+[2025.03.11-08.16.29:053][  0]LogMemory: Process Virtual Memory: 397.21 MB used, 397.21 MB peak
+[2025.03.11-08.16.29:053][  0]LogMemory: Physical Memory: 1680.57 MB used,  61535.21 MB free, 63215.78 MB total
+[2025.03.11-08.16.29:053][  0]LogMemory: Virtual Memory: 1700.80 MB used,  81994.98 MB free, 83695.78 MB total
+[2025.03.11-08.16.29:446][  0]11
+
+[2025.03.11-08.16.29:451][  0]ARK Version: 61.44
+[2025.03.11-08.16.29:617][  0]LogCFCore: SetSettings called:
+{
+	"defaultLanguage": "en",
+	"gameId": 83374,
+	"apiKey": "*****1aZe",
+	"maxConcurrentInstallations": 3,
+	"modsDirectory": "ShooterGame/Mods",
+	"modsDirectoryMode": "CFCore",
+	"userDataDirectory": "ShooterGame/ModsUserData",
+	"isServer": true,
+	"isServerPcOnly": false,
+	"throttling":
+	{
+		"diskWriteBytesPerSec": 0
+	},
+	"premiumMods":
+	{
+		"publicKeyPem": "*****"
+	},
+	"logger":
+	{
+		"enabled": true,
+		"history": 8,
+		"maxSizeInMB": 2
+	},
+	"dynamicContentCategoryIds": [ 6844 ]
+}
+[2025.03.11-08.16.29:617][  0]LogCFCore: InternalSettings called:
+{
+	"apiBaseUrl": "https://api.curseforge.com",
+	"chunkedUploadServerUrl": "https://chunk-uploads.curseforge.com",
+	"analyticsUrl": "https://analyticsnew.overwolf.com/analytics/Counter",
+	"userAgent": "cfcore.ue 1.0.104",
+	"platform": "windows",
+	"pluginVersion": "1.0.104",
+	"httpFileDownloadTimeoutSecs": 1200
+}
+[2025.03.11-08.16.29:617][  0]LogCFCore: Detected OS Windows: 10.0.19043.1.0.64bit
+[2025.03.11-08.16.29:664][  0]LogCFCore: UserContextInfo not loaded from disk
+[2025.03.11-08.16.29:664][  0]LogCFCore: Warning: Set installed mod status invalid (941450) - Missing module
+[2025.03.11-08.16.29:672][  0]LogCFCore: Warning: Set installed mod status invalid (930881) - Missing module
+[2025.03.11-08.16.29:678][  0]LogCFCore: Warning: Set installed mod status invalid (931877) - Missing module
+[2025.03.11-08.16.29:685][  0]LogCFCore: Warning: Set installed mod status invalid (942391) - Missing module
+[2025.03.11-08.16.29:691][  0]LogCFCore: Warning: Set installed mod status invalid (1060836) - Missing module
+[2025.03.11-08.16.29:698][  0]LogCFCore: Warning: Set installed mod status invalid (939228) - Missing module
+[2025.03.11-08.16.29:704][  0]LogCFCore: Warning: Set installed mod status invalid (1073132) - Missing module
+[2025.03.11-08.16.30:604][ 26]LogCFCore: No need to update existing mod: AB Oviraptor Gacha Crystal Collector (1186178)
+[2025.03.11-08.16.30:604][ 26]LogCFCore: No need to update existing mod: Vegetation Planters (932713)
+[2025.03.11-08.16.30:604][ 26]LogCFCore: No need to update existing mod: Day Indicator (1032529)
+[2025.03.11-08.16.30:604][ 26]LogCFCore: No need to update existing mod: Imbue and Upgrade Station (929543)
+[2025.03.11-08.16.30:604][ 26]LogCFCore: No need to update existing mod: Advanced Fishing Bait (928825)
+[2025.03.11-08.16.30:604][ 26]LogCFCore: No need to update existing mod: Upgrade Station (930494)
+[2025.03.11-08.16.30:604][ 26]LogCFCore: No need to update existing mod: Awesome Teleporters! (950914)
+[2025.03.11-08.16.30:604][ 26]LogCFCore: No need to update existing mod: Dino Colourizer! (968201)
+[2025.03.11-08.16.30:604][ 26]LogCFCore: No need to update existing mod: RR-Homedeco and more! (939604)
+[2025.03.11-08.16.30:604][ 26]LogCFCore: No need to update existing mod: Visual Storage (Cross Platform) (935528)
+[2025.03.11-08.16.30:604][ 26]LogCFCore: No need to update existing mod: AP: Death Recovery [Cross-platform] (929578)
+[2025.03.11-08.16.30:604][ 26]LogCFCore: No need to update existing mod: Super Spyglass Plus (929420)
+[2025.03.11-08.16.30:604][ 26]LogCFCore: No need to update existing mod: Improved Egg Incubator (CrossPlay) (935399)
+[2025.03.11-08.16.30:604][ 26]LogCFCore: No need to update existing mod: Der Dino Finder (935408)
+[2025.03.11-08.16.30:604][ 26]LogCFCore: No need to update existing mod: Wireless Tools: Dedicated Storage Intake (936940)
+[2025.03.11-08.16.30:604][ 26]LogCFCore: No need to update existing mod: ZUZ Ascended structures (984371)
+[2025.03.11-08.16.30:604][ 26]LogCFCore: No need to update existing mod: JVH Landscaping (937184)
+[2025.03.11-08.16.30:604][ 26]LogCFCore: No need to update existing mod: Klinger Additional Rustic Building (946694)
+[2025.03.11-08.16.30:604][ 26]LogCFCore: No need to update existing mod: Pelayori's Cryo Storage (Crossplay!) (928793)
+[2025.03.11-08.16.30:604][ 26]LogCFCore: No need to update existing mod: Admin Panel (929868)
+[2025.03.11-08.16.30:604][ 26]LogCFCore: No need to update existing mod: JVH Garden Decor (966079)
+[2025.03.11-08.16.30:604][ 26]LogCFCore: No need to update existing mod: Cybers Structures QoL+ (Crossplay) (940975)
+[2025.03.11-08.16.30:604][ 26]LogCFCore: Mod: Arkitect Structures Remastered (931874) requires upgrade/downgrade (6021509 -> 6286444)
+[2025.03.11-08.16.30:604][ 26]LogCFCore: Request to Install mod 'Arkitect Structures Remastered' (modId=931874, fileId=6286444)
+[2025.03.11-08.16.30:647][ 27]LogCFCore: Cleanup possible module ../../../ShooterGame/Binaries/Win64/ShooterGame/Mods/83374/931874_6021509 ...
+[2025.03.11-08.16.30:647][ 27]LogCFCore: Cleanup possible module ../../../ShooterGame/Binaries/Win64/ShooterGame/Mods/83374/931874_6286444 ...
+[2025.03.11-08.16.30:647][ 27]LogCFCore: Cleaning up possible 2 output dirs ...
+[2025.03.11-08.16.31:111][ 41]LogCFCore: Starting to download: https://mediafilez.forgecdn.net/files/6286/444/arkitect%20structures%20remastered-windowsserver%20105.zip, file id: 1
+[2025.03.11-08.16.31:285][ 47]LogCFCore: Warning: WriteBufferWithThrottling: left_to_write 10321123
+[2025.03.11-08.16.31:313][ 47]LogCFCore: Successfully completed chunked download for: https://mediafilez.forgecdn.net/files/6286/444/arkitect%20structures%20remastered-windowsserver%20105.zip
+[2025.03.11-08.16.31:346][ 48]LogCFCore: Verifying mod (931874) download ...
+[2025.03.11-08.16.31:720][ 60]LogCFCore: Cleanup temp directory ../../../ShooterGame/Binaries/Win64/ShooterGame/Mods/83374/.temp/931874_6286444 ...
+[2025.03.11-08.16.31:720][ 60]LogCFCore: Cleanup possible module ../../../ShooterGame/Binaries/Win64/ShooterGame/Mods/83374/.temp/931874_6286444 ...
+[2025.03.11-08.16.31:752][ 60]LogCFCore: Unzipping mod=931874 to ../../../ShooterGame/Binaries/Win64/ShooterGame/Mods/83374/.temp/931874_6286444 ...
+[2025.03.11-08.16.31:755][ 61]LogCFCore: Warning: WriteBufferWithThrottling: left_to_write 627
+[2025.03.11-08.16.31:788][ 62]LogCFCore: Warning: WriteBufferWithThrottling: left_to_write 89
+[2025.03.11-08.16.31:824][ 63]LogCFCore: Warning: WriteBufferWithThrottling: left_to_write 1264497
+[2025.03.11-08.16.31:856][ 64]LogCFCore: Warning: WriteBufferWithThrottling: left_to_write 269624
+[2025.03.11-08.16.31:927][ 66]LogCFCore: Warning: WriteBufferWithThrottling: left_to_write 14018944
+[2025.03.11-08.16.31:958][ 67]LogCFCore: Warning: WriteBufferWithThrottling: left_to_write 573325
+[2025.03.11-08.16.31:990][ 68]LogCFCore: Warning: WriteBufferWithThrottling: left_to_write 74
+[2025.03.11-08.16.32:023][ 69]LogCFCore: Warning: WriteBufferWithThrottling: left_to_write 125
+[2025.03.11-08.16.32:060][ 70]LogCFCore: Warning: WriteBufferWithThrottling: left_to_write 2304055
+[2025.03.11-08.16.32:123][ 71]LogCFCore: Cleanup possible module ../../../ShooterGame/Binaries/Win64/ShooterGame/Mods/83374/931874_6021509 ...
+[2025.03.11-08.16.32:123][ 71]LogCFCore: Cleanup possible module ../../../ShooterGame/Binaries/Win64/ShooterGame/Mods/83374/931874_6286444 ...
+[2025.03.11-08.16.32:123][ 71]LogCFCore: Cleaning up possible 2 output dirs ...
+[2025.03.11-08.16.32:157][ 72]LogCFCore: Moving ../../../ShooterGame/Binaries/Win64/ShooterGame/Mods/83374/.temp/931874_6286444 to ../../../ShooterGame/Binaries/Win64/ShooterGame/Mods/83374/931874_6286444 ...
+[2025.03.11-08.16.32:157][ 72]LogCFCore: Moving ../../../ShooterGame/Binaries/Win64/ShooterGame/Mods/83374/.temp/931874_6286444 to ../../../ShooterGame/Binaries/Win64/ShooterGame/Mods/83374/931874_6286444 ...
+[2025.03.11-08.16.32:191][ 73]LogCFCore: Cleaning up (modId=931874, fileId=6286444) ...
+[2025.03.11-08.16.32:269][ 75]LogCFCore: Mod valid: AB Oviraptor Gacha Crystal Collector (1186178)
+[2025.03.11-08.16.32:269][ 75]LogCFCore: Mod valid: Vegetation Planters (932713)
+[2025.03.11-08.16.32:269][ 75]LogCFCore: Mod valid: Day Indicator (1032529)
+[2025.03.11-08.16.32:269][ 75]LogCFCore: Mod valid: Imbue and Upgrade Station (929543)
+[2025.03.11-08.16.32:269][ 75]LogCFCore: Mod valid: Advanced Fishing Bait (928825)
+[2025.03.11-08.16.32:269][ 75]LogCFCore: Mod valid: Upgrade Station (930494)
+[2025.03.11-08.16.32:269][ 75]LogCFCore: Mod valid: Awesome Teleporters! (950914)
+[2025.03.11-08.16.32:269][ 75]LogCFCore: Mod valid: Dino Colourizer! (968201)
+[2025.03.11-08.16.32:269][ 75]LogCFCore: Mod valid: RR-Homedeco and more! (939604)
+[2025.03.11-08.16.32:269][ 75]LogCFCore: Mod valid: Visual Storage (Cross Platform) (935528)
+[2025.03.11-08.16.32:269][ 75]LogCFCore: Mod valid: AP: Death Recovery [Cross-platform] (929578)
+[2025.03.11-08.16.32:269][ 75]LogCFCore: Mod valid: Super Spyglass Plus (929420)
+[2025.03.11-08.16.32:269][ 75]LogCFCore: Mod valid: Improved Egg Incubator (CrossPlay) (935399)
+[2025.03.11-08.16.32:269][ 75]LogCFCore: Mod valid: Der Dino Finder (935408)
+[2025.03.11-08.16.32:269][ 75]LogCFCore: Mod valid: Wireless Tools: Dedicated Storage Intake (936940)
+[2025.03.11-08.16.32:269][ 75]LogCFCore: Mod valid: ZUZ Ascended structures (984371)
+[2025.03.11-08.16.32:269][ 75]LogCFCore: Mod valid: JVH Landscaping (937184)
+[2025.03.11-08.16.32:269][ 75]LogCFCore: Mod valid: Klinger Additional Rustic Building (946694)
+[2025.03.11-08.16.32:269][ 75]LogCFCore: Mod valid: Pelayori's Cryo Storage (Crossplay!) (928793)
+[2025.03.11-08.16.32:269][ 75]LogCFCore: Mod valid: Admin Panel (929868)
+[2025.03.11-08.16.32:269][ 75]LogCFCore: Mod valid: JVH Garden Decor (966079)
+[2025.03.11-08.16.32:269][ 75]LogCFCore: Mod valid: Cybers Structures QoL+ (Crossplay) (940975)
+[2025.03.11-08.16.32:269][ 75]LogCFCore: Mod valid: Arkitect Structures Remastered (931874)
+[2025.03.11-08.16.32:582][ 76]UShooterEngine::LoadGameMods with 23 mods
+[2025.03.11-08.16.32:582][ 76]UShooterEngine::LoadGameMods Loading Mod ShooterGame/Mods/83374/929868_6205104/AdminPanel/Content/PrimalGameData_BP_AdminPanel.uasset : 929868
+[2025.03.11-08.16.33:082][ 76]UShooterEngine::LoadGameMods Using mod asset Package /AdminPanel/PrimalGameData_BP_AdminPanel as PrimalGameDataOverride.
+[2025.03.11-08.16.33:083][ 76]UShooterEngine::LoadGameMods Loading Mod ShooterGame/Mods/83374/935528_6061525/VS/Content/PrimalGameData_BP_VisualStorage.uasset : 935528
+[2025.03.11-08.16.33:342][ 76]UShooterEngine::LoadGameMods Merging mod asset Package /VS/PrimalGameData_BP_VisualStorage with PrimalGameDataOverride.
+[2025.03.11-08.16.33:342][ 76]UShooterEngine::LoadGameMods Loading Mod ShooterGame/Mods/83374/950914_5371339/AwesomeTeleporters/Content/PrimalGameData_BP_AwesomeTeleporters.uasset : 950914
+[2025.03.11-08.16.33:414][ 76]UShooterEngine::LoadGameMods Merging mod asset Package /AwesomeTeleporters/PrimalGameData_BP_AwesomeTeleporters with PrimalGameDataOverride.
+[2025.03.11-08.16.33:414][ 76]UShooterEngine::LoadGameMods Loading Mod ShooterGame/Mods/83374/929578_6170377/APDeathRecovery/Content/PrimalGameData_BP_APDeathRecovery.uasset : 929578
+[2025.03.11-08.16.33:427][ 76]UShooterEngine::LoadGameMods Merging mod asset Package /APDeathRecovery/PrimalGameData_BP_APDeathRecovery with PrimalGameDataOverride.
+[2025.03.11-08.16.33:429][ 76]UShooterEngine::LoadGameMods Loading Mod ShooterGame/Mods/83374/931874_6286444/ArkitectStructures/Content/PrimalGameData_BP_ArkitectStructures.uasset : 931874
+[2025.03.11-08.16.33:458][ 76]UShooterEngine::LoadGameMods Merging mod asset Package /ArkitectStructures/PrimalGameData_BP_ArkitectStructures with PrimalGameDataOverride.
+[2025.03.11-08.16.33:458][ 76]UShooterEngine::LoadGameMods Loading Mod ShooterGame/Mods/83374/929543_6166424/ImbueStation/Content/PrimalGameData_BP_ImbueSystem.uasset : 929543
+[2025.03.11-08.16.33:476][ 76]UShooterEngine::LoadGameMods Merging mod asset Package /ImbueStation/PrimalGameData_BP_ImbueSystem with PrimalGameDataOverride.
+[2025.03.11-08.16.33:477][ 76]UShooterEngine::LoadGameMods Loading Mod ShooterGame/Mods/83374/935399_6159553/ModIncubator/Content/PrimalGameData_BP_ModIncubator.uasset : 935399
+[2025.03.11-08.16.33:507][ 76]UShooterEngine::LoadGameMods Merging mod asset Package /ModIncubator/PrimalGameData_BP_ModIncubator with PrimalGameDataOverride.
+[2025.03.11-08.16.33:507][ 76]UShooterEngine::LoadGameMods Loading Mod ShooterGame/Mods/83374/928793_6247785/Cryopods/Content/PrimalGameData_BP_Cryopods.uasset : 928793
+[2025.03.11-08.16.33:554][ 76]UShooterEngine::LoadGameMods Merging mod asset Package /Cryopods/PrimalGameData_BP_Cryopods with PrimalGameDataOverride.
+[2025.03.11-08.16.33:554][ 76]UShooterEngine::LoadGameMods Loading Mod ShooterGame/Mods/83374/937184_6163191/JVHLandscaping/Content/PrimalGameData_BP_JVHLandscaping.uasset : 937184
+[2025.03.11-08.16.33:568][ 76]UShooterEngine::LoadGameMods Merging mod asset Package /JVHLandscaping/PrimalGameData_BP_JVHLandscaping with PrimalGameDataOverride.
+[2025.03.11-08.16.33:568][ 76]UShooterEngine::LoadGameMods Loading Mod ShooterGame/Mods/83374/984371_6046947/ZUZStructures/Content/PrimalGameData_BP_BlankModZUZ.uasset : 984371
+[2025.03.11-08.16.33:586][ 76]UShooterEngine::LoadGameMods Merging mod asset Package /ZUZStructures/PrimalGameData_BP_BlankModZUZ with PrimalGameDataOverride.
+[2025.03.11-08.16.33:586][ 76]UShooterEngine::LoadGameMods Loading Mod ShooterGame/Mods/83374/930494_4972865/UpgradeStation/Content/PrimalGameData_BP_UpgradeStation.uasset : 930494
+[2025.03.11-08.16.33:599][ 76]UShooterEngine::LoadGameMods Merging mod asset Package /UpgradeStation/PrimalGameData_BP_UpgradeStation with PrimalGameDataOverride.
+[2025.03.11-08.16.33:599][ 76]UShooterEngine::LoadGameMods Loading Mod ShooterGame/Mods/83374/968201_5102807/DinoColourizer/Content/PrimalGameData_BP_DinoColourizer.uasset : 968201
+[2025.03.11-08.16.33:612][ 76]UShooterEngine::LoadGameMods Merging mod asset Package /DinoColourizer/PrimalGameData_BP_DinoColourizer with PrimalGameDataOverride.
+[2025.03.11-08.16.33:612][ 76]UShooterEngine::LoadGameMods Loading Mod ShooterGame/Mods/83374/1032529_5415388/NewDayNotification/Content/PrimalGameData_BP_NewDayNotification.uasset : 1032529
+[2025.03.11-08.16.33:624][ 76]UShooterEngine::LoadGameMods Merging mod asset Package /NewDayNotification/PrimalGameData_BP_NewDayNotification with PrimalGameDataOverride.
+[2025.03.11-08.16.33:625][ 76]UShooterEngine::LoadGameMods Loading Mod ShooterGame/Mods/83374/946694_6164267/KAWoodS/Content/PrimalGameData_BP_KAWoodS.uasset : 946694
+[2025.03.11-08.16.33:642][ 76]UShooterEngine::LoadGameMods Merging mod asset Package /KAWoodS/PrimalGameData_BP_KAWoodS with PrimalGameDataOverride.
+[2025.03.11-08.16.33:644][ 76]UShooterEngine::LoadGameMods Loading Mod ShooterGame/Mods/83374/939604_6190120/RR_Mod_Homedecoandmore/Content/PrimalGameData_BP_RR_Mod_Homedecoandmore.uasset : 939604
+[2025.03.11-08.16.33:660][ 76]UShooterEngine::LoadGameMods Merging mod asset Package /RR_Mod_Homedecoandmore/PrimalGameData_BP_RR_Mod_Homedecoandmore with PrimalGameDataOverride.
+[2025.03.11-08.16.33:660][ 76]UShooterEngine::LoadGameMods Loading Mod ShooterGame/Mods/83374/936940_6189117/Wireless_Tools/Content/PrimalGameData_WT.uasset : 936940
+[2025.03.11-08.16.33:673][ 76]UShooterEngine::LoadGameMods Merging mod asset Package /Wireless_Tools/PrimalGameData_WT with PrimalGameDataOverride.
+[2025.03.11-08.16.33:673][ 76]UShooterEngine::LoadGameMods Loading Mod ShooterGame/Mods/83374/966079_6191448/JVHGardenDecor/Content/PrimalGameData_BP_JVHGardenDecor.uasset : 966079
+[2025.03.11-08.16.33:685][ 76]UShooterEngine::LoadGameMods Merging mod asset Package /JVHGardenDecor/PrimalGameData_BP_JVHGardenDecor with PrimalGameDataOverride.
+[2025.03.11-08.16.33:685][ 76]UShooterEngine::LoadGameMods Loading Mod ShooterGame/Mods/83374/929420_6177787/SuperSpyglassPlus/Content/PrimalGameData_BP_SSP_Kav.uasset : 929420
+[2025.03.11-08.16.33:700][ 76]UShooterEngine::LoadGameMods Merging mod asset Package /SuperSpyglassPlus/PrimalGameData_BP_SSP_Kav with PrimalGameDataOverride.
+[2025.03.11-08.16.33:700][ 76]UShooterEngine::LoadGameMods Loading Mod ShooterGame/Mods/83374/940975_6287852/CybersStructures/Content/PrimalGameData_CybersStructures.uasset : 940975
+[2025.03.11-08.16.33:825][ 76]UShooterEngine::LoadGameMods Merging mod asset Package /CybersStructures/PrimalGameData_CybersStructures with PrimalGameDataOverride.
+[2025.03.11-08.16.33:825][ 76]UShooterEngine::LoadGameMods Loading Mod ShooterGame/Mods/83374/928825_4933215/FishingMod/Content/PrimalGameData_AdvancedFishingBait.uasset : 928825
+[2025.03.11-08.16.33:838][ 76]UShooterEngine::LoadGameMods Merging mod asset Package /FishingMod/PrimalGameData_AdvancedFishingBait with PrimalGameDataOverride.
+[2025.03.11-08.16.33:838][ 76]UShooterEngine::LoadGameMods Loading Mod ShooterGame/Mods/83374/935408_6254937/DinoFinder/Content/PrimalGameData_BP_DinoFinder.uasset : 935408
+[2025.03.11-08.16.33:857][ 76]UShooterEngine::LoadGameMods Merging mod asset Package /DinoFinder/PrimalGameData_BP_DinoFinder with PrimalGameDataOverride.
+[2025.03.11-08.16.33:857][ 76]UShooterEngine::LoadGameMods Loading Mod ShooterGame/Mods/83374/1186178_6122483/GachaCrystalCollector/Content/PrimalGameData_BP_BlankMod.uasset : 1186178
+[2025.03.11-08.16.33:869][ 76]UShooterEngine::LoadGameMods Merging mod asset Package /GachaCrystalCollector/PrimalGameData_BP_BlankMod with PrimalGameDataOverride.
+[2025.03.11-08.16.33:870][ 76]UShooterEngine::LoadGameMods Loading Mod ShooterGame/Mods/83374/932713_6083353/VegetationPlantersCore/Content/PrimalGameData_BP_VegetationPlantersCore.uasset : 932713
+[2025.03.11-08.16.33:883][ 76]UShooterEngine::LoadGameMods Merging mod asset Package /VegetationPlantersCore/PrimalGameData_BP_VegetationPlantersCore with PrimalGameDataOverride.
+[2025.03.11-08.16.33:883][ 76]Initialize Primal Game Data Override.
+[2025.03.11-08.16.33:897][ 76]Added Explorer Note Entry: DEARJANE_EXP_NOTE_1
+[2025.03.11-08.16.33:897][ 76]Added Explorer Note Entry: DEARJANE_EXP_NOTE_2
+[2025.03.11-08.16.33:897][ 76]Added Explorer Note Entry: DEARJANE_EXP_NOTE_3
+[2025.03.11-08.16.33:897][ 76]Added Explorer Note Entry: DEARJANE_EXP_NOTE_4
+[2025.03.11-08.16.33:897][ 76]Added Explorer Note Entry: DEARJANE_EXP_NOTE_5
+[2025.03.11-08.16.33:897][ 76]Added Explorer Note Entry: DEARJANE_EXP_NOTE_6
+[2025.03.11-08.16.33:897][ 76]Added Explorer Note Entry: DEARJANE_EXP_NOTE_7
+[2025.03.11-08.16.33:902][ 76]Primal Game Data Took 0.00 seconds
+[2025.03.11-08.16.33:906][ 76]Added Explorer Note Entry: DEARJANE_EXP_NOTE_1
+[2025.03.11-08.16.33:906][ 76]Added Explorer Note Entry: DEARJANE_EXP_NOTE_2
+[2025.03.11-08.16.33:906][ 76]Added Explorer Note Entry: DEARJANE_EXP_NOTE_3
+[2025.03.11-08.16.33:906][ 76]Added Explorer Note Entry: DEARJANE_EXP_NOTE_4
+[2025.03.11-08.16.33:906][ 76]Added Explorer Note Entry: DEARJANE_EXP_NOTE_5
+[2025.03.11-08.16.33:906][ 76]Added Explorer Note Entry: DEARJANE_EXP_NOTE_6
+[2025.03.11-08.16.33:906][ 76]Added Explorer Note Entry: DEARJANE_EXP_NOTE_7
+[2025.03.11-08.16.34:253][ 76]Server Initializing with BattlEye Anti-Cheat Protection. If you do not wish to use BattlEye, please launch with -NoBattlEye
+[2025.03.11-08.16.34:257][ 76]BattlEye successfully started.
+[2025.03.11-08.17.04:057][ 76][Pelayori's Cryo Storage] Server mod version: 61
+[2025.03.11-08.17.04:057][ 76]
+[2025.03.11-08.17.04:059][ 76]Admin Panel Active
+[2025.03.11-08.17.04:059][ 76]Admin Panel Version:78
+[2025.03.11-08.17.04:754][ 76]Visual Storage Version 1.8 Loaded
+[2025.03.11-08.17.22:994][ 76]Server: "Ark-Acid-Corps-TheIsland" has successfully started!
+[2025.03.11-08.17.26:557][ 76]Commandline:  TheIsland_WP?listen?Port=7777?RCONPort=27020?RCONEnabled=True -UseDynamicConfig -WinLiveMaxPlayers=10 -clusterid=59a7d5f7-21eb-4254-83ee-6a7131c22b44 -ClusterDirOverride="/home/gameserver/cluster-shared" -mods=929868,935528,950914,929578,931874,929543,935399,928793,937184,984371,930494,968201,1032529,946694,937184,939604,936940,966079,929420,940975,928825,935408,1186178,932713
+[2025.03.11-08.17.26:557][ 76]Full Startup: 57.87 seconds
+[2025.03.11-08.17.26:557][ 76]Number of cores 8
+[2025.03.11-08.17.30:263][ 77][=== Cybers Structures V247 is loaded and ready ===]
+[2025.03.11-08.17.30:290][ 77]Arkitect Structures Remastered Mod Version: 10.7
+[2025.03.11-08.17.41:446][291]Server has completed startup and is now advertising for join.
+[2025.03.11-08.20.22:711][173]IP for incoming account 00022e84915a418188ac388d7f3938d3 - IP 192.168.0.254
+[2025.03.11-08.20.27:037][299]
+Server: Ark-Acid-Corps-TheIsland
+Player: Munzai (00022e84915a418188ac388d7f3938d3) [574017658]  
+Joined the server
+[2025.03.11-08.24.07:208][951]IP for incoming account 00022e84915a418188ac388d7f3938d3 - IP 192.168.0.254
+[2025.03.11-08.24.12:377][104]
+Server: Ark-Acid-Corps-TheIsland
+Player: Munzai (00022e84915a418188ac388d7f3938d3) [574017658]  
+Joined the server
+[2025.03.11-08.27.32:582][ 53]FNetGUIDCache::PeriodicCleanAndCompact:   2.40ms total time [  1.99ms CleanReferences() and   0.41ms compacting]; ObjectLookup.Num()=11718 [203 removed]; NetGUIDLookup.Num()=11618 [301 removed]
+[2025.03.11-08.29.32:607][687]Garbage Collection Triggered!
+[2025.03.11-08.36.04:397][534]Frozen by ID: 00022e84915a418188ac388d7f3938d3
+[2025.03.11-08.36.24:132][132]Frozen by ID: 00022e84915a418188ac388d7f3938d3
+[2025.03.11-08.36.56:606][105]IP for incoming account 0002955f803143b7b16ea0344b35f21e - IP 88.172.52.212
+[2025.03.11-08.37.06:776][412]
+Server: Ark-Acid-Corps-TheIsland
+Player: Elienna (0002955f803143b7b16ea0344b35f21e) [193349694]  
+Joined the server
+[2025.03.11-08.37.32:601][136]FNetGUIDCache::PeriodicCleanAndCompact:   3.19ms total time [  2.52ms CleanReferences() and   0.66ms compacting]; ObjectLookup.Num()=18620 [218 removed]; NetGUIDLookup.Num()=18138 [599 removed]
+[2025.03.11-08.41.32:615][362]Garbage Collection Triggered!
+[2025.03.11-08.47.32:622][167]FNetGUIDCache::PeriodicCleanAndCompact:   4.11ms total time [  3.27ms CleanReferences() and   0.85ms compacting]; ObjectLookup.Num()=24845 [619 removed]; NetGUIDLookup.Num()=24427 [555 removed]
+[2025.03.11-08.53.32:641][710]Garbage Collection Triggered!
+[2025.03.11-08.57.32:651][923]FNetGUIDCache::PeriodicCleanAndCompact:   4.50ms total time [  3.65ms CleanReferences() and   0.85ms compacting]; ObjectLookup.Num()=24749 [1058 removed]; NetGUIDLookup.Num()=24196 [1192 removed]
+[2025.03.11-09.05.32:657][ 43]Garbage Collection Triggered!
+[2025.03.11-09.07.32:674][547]FNetGUIDCache::PeriodicCleanAndCompact:   4.50ms total time [  3.62ms CleanReferences() and   0.87ms compacting]; ObjectLookup.Num()=24582 [1617 removed]; NetGUIDLookup.Num()=24074 [1572 removed]
+[2025.03.11-09.17.32:672][296]Garbage Collection Triggered!
+[2025.03.11-09.17.33:229][297]FNetGUIDCache::PeriodicCleanAndCompact:   3.60ms total time [  2.83ms CleanReferences() and   0.77ms compacting]; ObjectLookup.Num()=24690 [1823 removed]; NetGUIDLookup.Num()=24265 [1738 removed]
+[2025.03.11-09.27.33:258][463]FNetGUIDCache::PeriodicCleanAndCompact:   4.67ms total time [  3.83ms CleanReferences() and   0.84ms compacting]; ObjectLookup.Num()=24410 [733 removed]; NetGUIDLookup.Num()=24210 [508 removed]
+[2025.03.11-09.29.32:688][ 90]Garbage Collection Triggered!
+[2025.03.11-09.37.33:265][647]FNetGUIDCache::PeriodicCleanAndCompact:   4.65ms total time [  3.77ms CleanReferences() and   0.89ms compacting]; ObjectLookup.Num()=24346 [258 removed]; NetGUIDLookup.Num()=24184 [220 removed]
+[2025.03.11-09.41.32:692][922]Garbage Collection Triggered!
+[2025.03.11-09.47.33:289][844]FNetGUIDCache::PeriodicCleanAndCompact:   4.34ms total time [  3.50ms CleanReferences() and   0.84ms compacting]; ObjectLookup.Num()=24421 [196 removed]; NetGUIDLookup.Num()=24176 [279 removed]
+[2025.03.11-09.53.32:697][751]Garbage Collection Triggered!
+[2025.03.11-09.55.37:962][534]=== Linke Inven=DedicatedStorage_CS_C_2143254624.PrimalInventory_DedicatedStorage_CS
+[2025.03.11-09.55.55:217][ 57]=== Linke Inven=DungBeetle_Character_BP_C_2146623983.DinoTamedInventoryComponent_Beetle_C_2146623974
+[2025.03.11-09.55.55:219][ 57]=== Linke Inven=TekStorage_CS_C_2144340188.PrimalInventory_TekStorage_CS
+[2025.03.11-09.57.33:310][ 16]FNetGUIDCache::PeriodicCleanAndCompact:   4.67ms total time [  3.82ms CleanReferences() and   0.85ms compacting]; ObjectLookup.Num()=24502 [254 removed]; NetGUIDLookup.Num()=24277 [234 removed]
+[2025.03.11-10.04.05:755][740]Munzai (00022e84915a418188ac388d7f3938d3) [574017658] Logged in as admin on  Ark-Acid-Corps-TheIsland
+[2025.03.11-10.04.07:254][784]
+Server: Ark-Acid-Corps-TheIsland
+Player: Munzai (00022e84915a418188ac388d7f3938d3) [574017658]  
+Used Cheat GCM
+[2025.03.11-10.05.32:726][373]Garbage Collection Triggered!
+[2025.03.11-10.07.33:326][997]FNetGUIDCache::PeriodicCleanAndCompact:   4.75ms total time [  3.88ms CleanReferences() and   0.87ms compacting]; ObjectLookup.Num()=25595 [480 removed]; NetGUIDLookup.Num()=25204 [644 removed]
+[2025.03.11-10.17.32:757][140]Garbage Collection Triggered!
+[2025.03.11-10.17.33:346][149]FNetGUIDCache::PeriodicCleanAndCompact:   4.13ms total time [  3.33ms CleanReferences() and   0.80ms compacting]; ObjectLookup.Num()=25486 [457 removed]; NetGUIDLookup.Num()=25263 [289 removed]
+[2025.03.11-10.27.33:378][340]FNetGUIDCache::PeriodicCleanAndCompact:   4.28ms total time [  3.45ms CleanReferences() and   0.84ms compacting]; ObjectLookup.Num()=25532 [265 removed]; NetGUIDLookup.Num()=25281 [293 removed]
+[2025.03.11-10.29.32:783][960]Garbage Collection Triggered!
+[2025.03.11-10.37.33:406][489]FNetGUIDCache::PeriodicCleanAndCompact:   4.99ms total time [  4.12ms CleanReferences() and   0.87ms compacting]; ObjectLookup.Num()=25762 [375 removed]; NetGUIDLookup.Num()=25346 [539 removed]
+[2025.03.11-10.41.32:810][749]Garbage Collection Triggered!
+[2025.03.11-10.45.50:870][555]
+Server: Ark-Acid-Corps-TheIsland
+Player: Munzai (00022e84915a418188ac388d7f3938d3) [574017658]  
+Used Cheat GCM
+[2025.03.11-10.47.33:421][653]FNetGUIDCache::PeriodicCleanAndCompact:   5.15ms total time [  4.26ms CleanReferences() and   0.88ms compacting]; ObjectLookup.Num()=25867 [518 removed]; NetGUIDLookup.Num()=25644 [325 removed]
+[2025.03.11-10.53.32:830][555]Garbage Collection Triggered!
+[2025.03.11-10.57.33:438][842]FNetGUIDCache::PeriodicCleanAndCompact:   4.97ms total time [  4.12ms CleanReferences() and   0.85ms compacting]; ObjectLookup.Num()=25798 [326 removed]; NetGUIDLookup.Num()=25585 [316 removed]
+[2025.03.11-11.05.32:857][388]Garbage Collection Triggered!
+[2025.03.11-11.07.33:470][ 32]FNetGUIDCache::PeriodicCleanAndCompact:   4.77ms total time [  3.97ms CleanReferences() and   0.80ms compacting]; ObjectLookup.Num()=25802 [259 removed]; NetGUIDLookup.Num()=25581 [267 removed]
+[2025.03.11-11.13.30:397][861]
+Server: Ark-Acid-Corps-TheIsland
+Player: Munzai (00022e84915a418188ac388d7f3938d3) [574017658]  
+Used Cheat GCM
+[2025.03.11-11.14.51:520][308]=== Linke Inven=DungBeetle_Character_BP_C_2146623983.DinoTamedInventoryComponent_Beetle_C_2146623974
+[2025.03.11-11.17.32:875][169]Garbage Collection Triggered!
+[2025.03.11-11.17.33:492][179]FNetGUIDCache::PeriodicCleanAndCompact:   4.25ms total time [  3.46ms CleanReferences() and   0.79ms compacting]; ObjectLookup.Num()=25974 [330 removed]; NetGUIDLookup.Num()=25738 [344 removed]
+[2025.03.11-11.21.16:207][925]
+Server: Ark-Acid-Corps-TheIsland
+Player: Munzai (00022e84915a418188ac388d7f3938d3) [574017658]  
+Changed Dino Gender Via AP Rifle
+[2025.03.11-11.21.16:207][925]
+Server: Ark-Acid-Corps-TheIsland
+Player: Munzai (00022e84915a418188ac388d7f3938d3) [574017658]  
+Changed Gender Via AP Rifle
+[2025.03.11-11.27.33:516][332]FNetGUIDCache::PeriodicCleanAndCompact:   5.85ms total time [  4.95ms CleanReferences() and   0.91ms compacting]; ObjectLookup.Num()=25986 [435 removed]; NetGUIDLookup.Num()=25740 [445 removed]
+[2025.03.11-11.29.32:877][956]Garbage Collection Triggered!
+[2025.03.11-11.37.33:524][466]FNetGUIDCache::PeriodicCleanAndCompact:   4.59ms total time [  3.70ms CleanReferences() and   0.89ms compacting]; ObjectLookup.Num()=26088 [329 removed]; NetGUIDLookup.Num()=25892 [278 removed]
+[2025.03.11-11.41.32:905][709]Garbage Collection Triggered!
+[2025.03.11-11.47.33:541][593]FNetGUIDCache::PeriodicCleanAndCompact:   4.16ms total time [  3.28ms CleanReferences() and   0.88ms compacting]; ObjectLookup.Num()=26205 [231 removed]; NetGUIDLookup.Num()=25965 [275 removed]
+[2025.03.11-11.48.21:104][ 30]=== Linke Inven=DedicatedStorage_CS_C_2143243835.PrimalInventory_DedicatedStorage_CS
+[2025.03.11-11.53.32:925][436]Garbage Collection Triggered!
+[2025.03.11-11.56.20:202][488]=== Linke Inven=DedicatedStorage_CS_C_2143243835.PrimalInventory_DedicatedStorage_CS
+[2025.03.11-11.57.33:569][658]FNetGUIDCache::PeriodicCleanAndCompact:   5.73ms total time [  4.63ms CleanReferences() and   1.09ms compacting]; ObjectLookup.Num()=26114 [388 removed]; NetGUIDLookup.Num()=25941 [321 removed]
+[2025.03.11-11.58.52:723][ 48]=== Linke Inven=DedicatedStorage_CS_C_2143243835.PrimalInventory_DedicatedStorage_CS
+[2025.03.11-12.02.16:396][159]=== Linke Inven=DedicatedStorage_CS_C_2143243835.PrimalInventory_DedicatedStorage_CS
+[2025.03.11-12.02.39:912][869]=== Linke Inven=DedicatedStorage_CS_C_2143243835.PrimalInventory_DedicatedStorage_CS
+[2025.03.11-12.05.32:929][ 51]Garbage Collection Triggered!
+[2025.03.11-12.07.33:595][658]FNetGUIDCache::PeriodicCleanAndCompact:   4.48ms total time [  3.62ms CleanReferences() and   0.86ms compacting]; ObjectLookup.Num()=26251 [270 removed]; NetGUIDLookup.Num()=26035 [311 removed]
+[2025.03.11-12.08.42:180][698]=== Linke Inven=DedicatedStorage_CS_C_2143243835.PrimalInventory_DedicatedStorage_CS
+[2025.03.11-12.13.50:030][881]Buff Removed for: Munzai
+[2025.03.11-12.17.33:663][662]FNetGUIDCache::PeriodicCleanAndCompact:   4.84ms total time [  4.21ms CleanReferences() and   0.64ms compacting]; ObjectLookup.Num()=17436 [9088 removed]; NetGUIDLookup.Num()=17232 [9076 removed]
+[2025.03.11-12.27.33:691][868]FNetGUIDCache::PeriodicCleanAndCompact:   3.13ms total time [  2.56ms CleanReferences() and   0.57ms compacting]; ObjectLookup.Num()=17223 [213 removed]; NetGUIDLookup.Num()=17177 [55 removed]
+[2025.03.11-12.27.59:570][654]Garbage Collection Triggered!
+[2025.03.11-12.28.00:194][663]IP for incoming account 0002955f803143b7b16ea0344b35f21e - IP 88.172.52.212
+[2025.03.11-12.28.07:662][889]
+Server: Ark-Acid-Corps-TheIsland
+Player:  (0002955f803143b7b16ea0344b35f21e) [0]  
+Joined the server
+[2025.03.11-12.28.34:402][682]Buff Removed for: Elienna
+[2025.03.11-12.37.33:695][ 14]FNetGUIDCache::PeriodicCleanAndCompact:   4.04ms total time [  3.24ms CleanReferences() and   0.80ms compacting]; ObjectLookup.Num()=20095 [49 removed]; NetGUIDLookup.Num()=19927 [171 removed]
+[2025.03.11-12.39.59:585][447]Garbage Collection Triggered!
+[2025.03.11-12.47.33:722][124]FNetGUIDCache::PeriodicCleanAndCompact:   4.38ms total time [  3.59ms CleanReferences() and   0.79ms compacting]; ObjectLookup.Num()=26229 [843 removed]; NetGUIDLookup.Num()=25829 [1075 removed]
+[2025.03.11-12.49.10:086][ 53]Elienna (0002955f803143b7b16ea0344b35f21e) [193349694] Logged in as admin on  Ark-Acid-Corps-TheIsland
+[2025.03.11-12.49.14:927][198]
+Server: Ark-Acid-Corps-TheIsland
+Player: Elienna (0002955f803143b7b16ea0344b35f21e) [193349694]  
+Used Cheat GCM
+[2025.03.11-12.49.17:396][273]
+Server: Ark-Acid-Corps-TheIsland
+Player: Elienna (0002955f803143b7b16ea0344b35f21e) [193349694]  
+Used Cheat GCM
+[2025.03.11-12.50.31:280][492]=== Linke Inven=DedicatedStorage_CS_C_2143125028.PrimalInventory_DedicatedStorage_CS
+[2025.03.11-12.51.59:597][157]Garbage Collection Triggered!
+[2025.03.11-12.53.24:096][703]Buff Removed for: Elienna
+[2025.03.11-12.57.33:736][271]FNetGUIDCache::PeriodicCleanAndCompact:   3.77ms total time [  3.19ms CleanReferences() and   0.58ms compacting]; ObjectLookup.Num()=17840 [8961 removed]; NetGUIDLookup.Num()=17638 [8763 removed]
+[2025.03.11-13.07.33:764][472]FNetGUIDCache::PeriodicCleanAndCompact:   3.01ms total time [  2.53ms CleanReferences() and   0.49ms compacting]; ObjectLookup.Num()=17638 [202 removed]; NetGUIDLookup.Num()=17584 [54 removed]
+[2025.03.11-13.17.33:772][670]FNetGUIDCache::PeriodicCleanAndCompact:   2.80ms total time [  2.24ms CleanReferences() and   0.56ms compacting]; ObjectLookup.Num()=17584 [54 removed]; NetGUIDLookup.Num()=17584 [0 removed]
+[2025.03.11-13.27.33:777][867]FNetGUIDCache::PeriodicCleanAndCompact:   2.81ms total time [  2.79ms CleanReferences() and   0.01ms compacting]; ObjectLookup.Num()=17584 [0 removed]; NetGUIDLookup.Num()=17584 [0 removed]
+[2025.03.11-13.37.33:796][ 67]FNetGUIDCache::PeriodicCleanAndCompact:   2.26ms total time [  2.24ms CleanReferences() and   0.02ms compacting]; ObjectLookup.Num()=17584 [0 removed]; NetGUIDLookup.Num()=17584 [0 removed]
+[2025.03.11-13.47.33:811][264]FNetGUIDCache::PeriodicCleanAndCompact:   2.60ms total time [  2.43ms CleanReferences() and   0.16ms compacting]; ObjectLookup.Num()=17581 [3 removed]; NetGUIDLookup.Num()=17581 [3 removed]
+[2025.03.11-13.57.33:838][467]FNetGUIDCache::PeriodicCleanAndCompact:   2.13ms total time [  2.11ms CleanReferences() and   0.01ms compacting]; ObjectLookup.Num()=17581 [0 removed]; NetGUIDLookup.Num()=17581 [0 removed]
+[2025.03.11-14.07.33:867][670]FNetGUIDCache::PeriodicCleanAndCompact:   2.17ms total time [  2.15ms CleanReferences() and   0.01ms compacting]; ObjectLookup.Num()=17581 [0 removed]; NetGUIDLookup.Num()=17581 [0 removed]
+[2025.03.11-14.17.33:898][875]FNetGUIDCache::PeriodicCleanAndCompact:   2.46ms total time [  2.45ms CleanReferences() and   0.01ms compacting]; ObjectLookup.Num()=17581 [0 removed]; NetGUIDLookup.Num()=17581 [0 removed]
+[2025.03.11-14.27.33:913][ 75]FNetGUIDCache::PeriodicCleanAndCompact:   2.19ms total time [  2.17ms CleanReferences() and   0.01ms compacting]; ObjectLookup.Num()=17581 [0 removed]; NetGUIDLookup.Num()=17581 [0 removed]
+[2025.03.11-14.37.33:918][274]FNetGUIDCache::PeriodicCleanAndCompact:   2.55ms total time [  2.54ms CleanReferences() and   0.01ms compacting]; ObjectLookup.Num()=17581 [0 removed]; NetGUIDLookup.Num()=17581 [0 removed]
+[2025.03.11-14.47.33:947][481]FNetGUIDCache::PeriodicCleanAndCompact:   2.09ms total time [  2.07ms CleanReferences() and   0.01ms compacting]; ObjectLookup.Num()=17581 [0 removed]; NetGUIDLookup.Num()=17581 [0 removed]
+[2025.03.11-14.51.59:998][551]Garbage Collection Triggered!
+[2025.03.11-14.57.33:976][670]FNetGUIDCache::PeriodicCleanAndCompact:   2.14ms total time [  2.12ms CleanReferences() and   0.01ms compacting]; ObjectLookup.Num()=17581 [0 removed]; NetGUIDLookup.Num()=17581 [0 removed]
+[2025.03.11-15.07.34:006][874]FNetGUIDCache::PeriodicCleanAndCompact:   2.15ms total time [  2.14ms CleanReferences() and   0.01ms compacting]; ObjectLookup.Num()=17581 [0 removed]; NetGUIDLookup.Num()=17581 [0 removed]
+[2025.03.11-15.17.34:017][ 76]FNetGUIDCache::PeriodicCleanAndCompact:   2.38ms total time [  2.36ms CleanReferences() and   0.02ms compacting]; ObjectLookup.Num()=17581 [0 removed]; NetGUIDLookup.Num()=17581 [0 removed]
+[2025.03.11-15.27.34:047][277]FNetGUIDCache::PeriodicCleanAndCompact:   2.51ms total time [  2.49ms CleanReferences() and   0.01ms compacting]; ObjectLookup.Num()=17581 [0 removed]; NetGUIDLookup.Num()=17581 [0 removed]
+[2025.03.11-15.37.34:059][479]FNetGUIDCache::PeriodicCleanAndCompact:   2.54ms total time [  2.53ms CleanReferences() and   0.01ms compacting]; ObjectLookup.Num()=17581 [0 removed]; NetGUIDLookup.Num()=17581 [0 removed]
+[2025.03.11-15.47.34:081][684]FNetGUIDCache::PeriodicCleanAndCompact:   2.13ms total time [  2.12ms CleanReferences() and   0.01ms compacting]; ObjectLookup.Num()=17581 [0 removed]; NetGUIDLookup.Num()=17581 [0 removed]
+[2025.03.11-15.57.34:099][882]FNetGUIDCache::PeriodicCleanAndCompact:   2.37ms total time [  2.36ms CleanReferences() and   0.01ms compacting]; ObjectLookup.Num()=17581 [0 removed]; NetGUIDLookup.Num()=17581 [0 removed]
+[2025.03.11-16.07.34:102][ 82]FNetGUIDCache::PeriodicCleanAndCompact:   2.72ms total time [  2.71ms CleanReferences() and   0.01ms compacting]; ObjectLookup.Num()=17581 [0 removed]; NetGUIDLookup.Num()=17581 [0 removed]
+[2025.03.11-16.17.34:114][283]FNetGUIDCache::PeriodicCleanAndCompact:   2.10ms total time [  2.09ms CleanReferences() and   0.01ms compacting]; ObjectLookup.Num()=17581 [0 removed]; NetGUIDLookup.Num()=17581 [0 removed]
+[2025.03.11-16.27.34:140][486]FNetGUIDCache::PeriodicCleanAndCompact:   2.17ms total time [  2.16ms CleanReferences() and   0.01ms compacting]; ObjectLookup.Num()=17581 [0 removed]; NetGUIDLookup.Num()=17581 [0 removed]
+[2025.03.11-16.37.34:155][689]FNetGUIDCache::PeriodicCleanAndCompact:   2.18ms total time [  2.17ms CleanReferences() and   0.01ms compacting]; ObjectLookup.Num()=17581 [0 removed]; NetGUIDLookup.Num()=17581 [0 removed]
+[2025.03.11-16.47.34:176][891]FNetGUIDCache::PeriodicCleanAndCompact:   2.24ms total time [  2.22ms CleanReferences() and   0.01ms compacting]; ObjectLookup.Num()=17581 [0 removed]; NetGUIDLookup.Num()=17581 [0 removed]
+[2025.03.11-16.52.00:491][967]Garbage Collection Triggered!
+[2025.03.11-16.57.34:187][ 79]FNetGUIDCache::PeriodicCleanAndCompact:   2.68ms total time [  2.66ms CleanReferences() and   0.02ms compacting]; ObjectLookup.Num()=17581 [0 removed]; NetGUIDLookup.Num()=17581 [0 removed]
+[2025.03.11-17.07.34:193][286]FNetGUIDCache::PeriodicCleanAndCompact:   2.13ms total time [  2.12ms CleanReferences() and   0.01ms compacting]; ObjectLookup.Num()=17581 [0 removed]; NetGUIDLookup.Num()=17581 [0 removed]
+[2025.03.11-17.17.34:214][490]FNetGUIDCache::PeriodicCleanAndCompact:   2.36ms total time [  2.35ms CleanReferences() and   0.01ms compacting]; ObjectLookup.Num()=17581 [0 removed]; NetGUIDLookup.Num()=17581 [0 removed]
+[2025.03.11-17.27.34:229][692]FNetGUIDCache::PeriodicCleanAndCompact:   2.48ms total time [  2.47ms CleanReferences() and   0.01ms compacting]; ObjectLookup.Num()=17581 [0 removed]; NetGUIDLookup.Num()=17581 [0 removed]
+[2025.03.11-17.37.34:230][899]FNetGUIDCache::PeriodicCleanAndCompact:   2.37ms total time [  2.36ms CleanReferences() and   0.01ms compacting]; ObjectLookup.Num()=17581 [0 removed]; NetGUIDLookup.Num()=17581 [0 removed]
+[2025.03.11-17.47.34:239][104]FNetGUIDCache::PeriodicCleanAndCompact:   2.48ms total time [  2.47ms CleanReferences() and   0.01ms compacting]; ObjectLookup.Num()=17581 [0 removed]; NetGUIDLookup.Num()=17581 [0 removed]
+[2025.03.11-17.57.34:260][307]FNetGUIDCache::PeriodicCleanAndCompact:   3.56ms total time [  3.53ms CleanReferences() and   0.03ms compacting]; ObjectLookup.Num()=17581 [0 removed]; NetGUIDLookup.Num()=17581 [0 removed]
+[2025.03.11-18.07.34:274][509]FNetGUIDCache::PeriodicCleanAndCompact:   2.51ms total time [  2.50ms CleanReferences() and   0.01ms compacting]; ObjectLookup.Num()=17581 [0 removed]; NetGUIDLookup.Num()=17581 [0 removed]
+[2025.03.11-18.17.34:283][709]FNetGUIDCache::PeriodicCleanAndCompact:   2.56ms total time [  2.55ms CleanReferences() and   0.01ms compacting]; ObjectLookup.Num()=17581 [0 removed]; NetGUIDLookup.Num()=17581 [0 removed]

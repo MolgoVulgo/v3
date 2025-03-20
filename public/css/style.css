@@ -1,0 +1,17 @@
+.server-tabs {
+    margin-top: 10px;
+}
+
+.server-tabs button {
+    padding: 5px 10px;
+    margin-right: 5px;
+    cursor: pointer;
+}
+
+.tab-content {
+    margin-top: 10px;
+    border: 1px solid #ccc;
+    padding: 10px;
+    display: none;
+    background: #f9f9f9;
+}

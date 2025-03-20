@@ -1,0 +1,87 @@
+[
+    {
+      "keyword": "Redirecting stderr to",
+      "state": "Redirecting standard error output"
+    },
+    {
+      "keyword": "Logging directory:",
+      "state": "Setting logging directory"
+    },
+    {
+      "keyword": "Checking for available updates...",
+      "state": "Checking for Steam updates"
+    },
+    {
+      "keyword": "Downloading update",
+      "state": "Downloading Steam update"
+    },
+    {
+      "keyword": "Download complete.",
+      "state": "Steam update download completed"
+    },
+    {
+      "keyword": "Installing update...",
+      "state": "Installing Steam update"
+    },
+    {
+      "keyword": "Extracting package...",
+      "state": "Extracting Steam package"
+    },
+    {
+      "keyword": "Cleaning up...",
+      "state": "Cleaning up installation files"
+    },
+    {
+      "keyword": "Update complete, launching Steamcmd...",
+      "state": "Update finished, launching SteamCMD"
+    },
+    {
+      "keyword": "Restarting steamcmd by request...",
+      "state": "SteamCMD restart triggered"
+    },
+    {
+      "keyword": "Verifying installation...",
+      "state": "Verifying SteamCMD installation"
+    },
+    {
+      "keyword": "Steam Console Client",
+      "state": "Launching Steam Console Client"
+    },
+    {
+      "keyword": "Loading Steam API...OK",
+      "state": "Steam API successfully loaded"
+    },
+    {
+      "keyword": "Connecting anonymously to Steam Public...OK",
+      "state": "Connected to Steam Public servers"
+    },
+    {
+      "keyword": "Update state \\(0x5\\) verifying install, progress: (.*?) \\(",
+      "state": "Verifying Steam installation progress"
+    },
+    {
+      "keyword": "Success! App '(.*?)' fully installed.",
+      "state": "Game server application successfully installed"
+    },
+    {
+      "keyword": "Starting the ARK: Survival Ascended dedicated server...",
+      "state": "Starting ARK: Survival Ascended dedicated server"
+    },
+    {
+      "keyword": "Start parameters:",
+      "state": "Displaying ARK server start parameters"
+    },
+    {
+      "keyword": "fsync: up and running.",
+      "state": "Filesystem sync process started"
+    },
+    {
+      "keyword": "Failed to read /etc/machine-id",
+      "state": "Error reading machine ID"
+    },
+    {
+      "keyword": "wine: RLIMIT_NICE is <= 20, unable to use setpriority safely",
+      "state": "Wine process limitation detected"
+    }
+  ]
+  

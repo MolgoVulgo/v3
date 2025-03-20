@@ -1,0 +1,67 @@
+<div class="col-md-4 mb-4">
+    <div class="card server-card shadow-sm">
+        <div class="card-header text-white bg-dark text-center">
+            <h5 id="server-name-<%= server.SERVER_NAME %>" class="mb-0 p-2 rounded">
+                <%= server.SERVER_NAME %> <span id="status-hidden-<%= server.SERVER_NAME %>" class="d-none"></span>
+            </h5>
+        </div>
+        <div class="card-body text-center">
+            <div class="mt-3">
+                <small>CPU: <span id="cpu-<%= server.SERVER_NAME %>" class="text-info">N/A</span>%</small><br>
+                <small>Memory: <span id="memory-<%= server.SERVER_NAME %>" class="text-warning">N/A</span> GB</small>
+            </div>
+
+            <div class="mt-3">
+                <small>Players: <span id="players-<%= server.SERVER_NAME %>" class="text-primary">0</span></small>
+                <button class="btn btn-sm btn-info" onclick="showPlayerList('<%= server.SERVER_NAME %>')">
+                    <i class="fas fa-users"></i> Voir
+                </button>
+            </div>
+
+            <div class="mt-3">
+                <button class="btn btn-success btn-sm me-1 btn-start" data-server="<%= server.SERVER_NAME %>">
+                    <i class="fas fa-play"></i> Start
+                </button>
+                <button class="btn btn-danger btn-sm me-1 btn-stop" data-server="<%= server.SERVER_NAME %>">
+                    <i class="fas fa-stop"></i> Stop
+                </button>
+                <button class="btn btn-warning btn-sm btn-restart" data-server="<%= server.SERVER_NAME %>">
+                    <i class="fas fa-sync-alt"></i> Restart
+                </button>
+            </div>
+        </div>
+        <div class="card-footer bg-light">
+            <ul class="nav nav-tabs" id="chartTabs-<%= server.SERVER_NAME %>" role="tablist">
+                <li class="nav-item">
+                    <button class="nav-link <%= server.ENABLED ? 'active' : '' %>" 
+                        data-bs-toggle="tab" data-bs-target="#actions-<%= server.SERVER_NAME %>">
+                        Actions
+                    </button>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-link <%= server.ENABLED ? '' : 'active' %>" 
+                        data-bs-toggle="tab" data-bs-target="#info-<%= server.SERVER_NAME %>">
+                        Info
+                    </button>
+                </li>
+            </ul>
+            <div class="tab-content mt-2">
+                <div class="tab-pane fade <%= server.ENABLED ? 'show active' : '' %>" 
+                    id="actions-<%= server.SERVER_NAME %>">
+                    <p>Actions log will be displayed here.</p>
+                </div>
+                <div class="tab-pane fade <%= server.ENABLED ? '' : 'show active' %> p-2" 
+                    id="info-<%= server.SERVER_NAME %>">
+                    <ul class="list-group">
+                        <li class="list-group-item"><strong>Map:</strong> <%= server.MAP_NAME %></li>
+                        <li class="list-group-item"><strong>Mods:</strong> <%= server.MODS || "None" %></li>
+                        <li class="list-group-item"><strong>Port:</strong> <%= server.PORT %></li>
+                        <li class="list-group-item"><strong>RCON Port:</strong> <%= server.RCON_PORT %></li>
+                        <li class="list-group-item"><strong>Max Players:</strong> <%= server.MAX_PLAYERS %></li>
+                        <li class="list-group-item"><strong>Cluster ID:</strong> <%= server.CLUSTER_ID %></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

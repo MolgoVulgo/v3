@@ -1,0 +1,38 @@
+{
+    "name": "ark-asa-server-management",
+    "version": "1.0.0",
+    "description": "Management Serveur Ark: Survival Ascended avec Docker, RCON et API Express.js",
+    "main": "index.js",
+    "scripts": {
+        "start": "node index.js",
+        "dev": "nodemon index.js --ignore 'server-files/'",
+        "test": "jest",
+        "setup": "node setup.js",
+        "postinstall": "node setup.js"
+    },
+    "dependencies": {
+        "bootstrap": "^5.3.3",
+        "chart.js": "^4.4.8",
+        "dotenv": "^16.4.7",
+        "ejs": "^3.1.10",
+        "express": "^4.21.2",
+        "handlebars": "^4.7.8",
+        "rcon": "^1.1.0",
+        "router": "^2.1.0",
+        "uuid": "^11.1.0",
+        "ws": "^8.18.1"
+    },
+    "devDependencies": {
+        "nodemon": "^3.0.2"
+    },
+    "engines": {
+        "node": ">=18.0.0"
+    },
+    "keywords": [
+        "Ark",
+        "Survival Ascended",
+        "Server Management"
+    ],
+    "author": "Molgo",
+    "license": "GPL-3.0"
+}

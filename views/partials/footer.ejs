@@ -1,0 +1,33 @@
+<footer class="text-center py-3">
+    <p>© <%= new Date().getFullYear() %> Ark ASA Management. All rights reserved.</p>
+
+    <!-- Bootstrap JS -->
+    <script src="/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="/handlebars/handlebars.min.js"></script>
+
+    <!-- Scripts spécifiques aux pages -->
+    <% if (page === 'index') { %>
+        <script src="/js/dashboardServers.js"></script> <!-- Gestion dashboard index.ejs -->
+        <script>
+            document.addEventListener("DOMContentLoaded", () => {
+                loadServers();
+                refreshAllServersStatus();
+
+                // ✅ Ajout : Vérification toutes les 30 secondes
+                setInterval(() => {
+                    refreshAllServersStatus();
+                }, 10000); // 30000 ms = 30 sec
+
+            });
+        </script>
+    <% } else if (page === 'servers') { %>
+        <script src="/js/manageServers.js"></script> <!-- Gestion page servers.ejs -->
+        <script src="/js/formHandler.js"></script> <!-- Gestion formulaires servers.ejs -->
+        <script>
+            document.addEventListener("DOMContentLoaded", () => {
+                loadServers();
+                loadMaps();
+            });
+        </script>
+    <% } %>
+</footer>

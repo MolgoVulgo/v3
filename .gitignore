@@ -1,0 +1,6 @@
+node_modules
+server-files/*
+compose-files/*
+steamcmd/*
+steam/*
+package-lock.json

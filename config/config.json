@@ -1,0 +1,26 @@
+{
+  "serverCheckInterval": 10000,
+  "webSocketPort": 8080,
+  "SERVERS": [
+    {
+      "SERVER_NAME": "TheIsland",
+      "MAP_NAME": "TheIsland",
+      "PORT": 7780,
+      "RCON_PORT": 27023,
+      "MAX_PLAYERS": 10,
+      "MODS": "",
+      "CLUSTER_ID": "27478b61-c26a-44bf-8bac-18a30ca5b4ec",
+      "ENABLED": false
+    },
+    {
+      "SERVER_NAME": "Aberration",
+      "MAP_NAME": "Aberration",
+      "PORT": 7781,
+      "RCON_PORT": 27024,
+      "MAX_PLAYERS": 10,
+      "MODS": "",
+      "CLUSTER_ID": "27478b61-c26a-44bf-8bac-18a30ca5b4ec",
+      "ENABLED": false
+    }
+  ]
+}

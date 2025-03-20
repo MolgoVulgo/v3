@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+    <%- include('partials/header', { title: "Ark ASA - Dashboard" }) %>
+<body data-page="servers">
+    <%- include('partials/navbar') %>
+
+    <div class="container mt-4">
+        <h1 class="text-center mb-4">Ark Server Dashboard</h1>
+
+        <!-- 📊 Global Statistics -->
+        <section id="server-stats" class="mb-4">
+            <div class="row text-center">
+                <div class="col-md-3"><strong>Total Servers:</strong> <span id="total-servers">0</span></div>
+                <div class="col-md-3"><strong>Active Servers:</strong> <span id="active-servers">0</span></div>
+                <div class="col-md-3"><strong>Total Players:</strong> <span id="total-players">0</span></div>
+                <div class="col-md-3"><strong>CPU Usage:</strong> <span id="cpu-usage">0%</span></div>
+            </div>
+        </section>
+
+        <!-- 🎮 Server List -->
+        <section id="server-list">
+            <div class="row">
+                <% servers.forEach(server => { %>
+                    <div class="col-md-4 mb-4">
+                        <div class="card server-card shadow-sm">
+                            <div class="card-header text-white bg-dark text-center">
+                                <h5><%= server.SERVER_NAME %></h5>
+                            </div>
+                            <div class="card-body text-center">
+                                <!-- 📈 CPU & Memory Stats -->
+                                <small>CPU: <span id="cpu-<%= server.SERVER_NAME %>" class="text-info">N/A</span>%</small><br>
+                                <small>Memory: <span id="memory-<%= server.SERVER_NAME %>" class="text-warning">N/A</span> GB</small><br>
+
+                                <!-- 🎮 Player Count -->
+                                <small>Players: <span id="players-<%= server.SERVER_NAME %>" class="text-primary">0</span></small>
+                                <button class="btn btn-sm btn-info" onclick="showPlayerList('<%= server.SERVER_NAME %>')">
+                                    <i class="fas fa-users"></i> Voir
+                                </button>
+
+                                <!-- 🟢 Server Controls -->
+                                <div class="mt-3">
+                                    <button class="btn btn-success btn-sm" onclick="startServer('<%= server.SERVER_NAME %>')">
+                                        <i class="fas fa-play"></i> Start
+                                    </button>
+                                    <button class="btn btn-danger btn-sm" onclick="stopServer('<%= server.SERVER_NAME %>')">
+                                        <i class="fas fa-stop"></i> Stop
+                                    </button>
+                                    <button class="btn btn-warning btn-sm" onclick="restartServer('<%= server.SERVER_NAME %>')">
+                                        <i class="fas fa-sync-alt"></i> Restart
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- 🗂️ Tabs -->
+                            <div class="card-footer bg-light">
+                                <ul class="nav nav-tabs" id="server-tabs-<%= server.SERVER_NAME %>">
+                                    <li class="nav-item">
+                                        <a class="nav-link active" data-bs-toggle="tab" href="#memory-<%= server.SERVER_NAME %>">Memory</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" data-bs-toggle="tab" href="#cpu-<%= server.SERVER_NAME %>">CPU</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" data-bs-toggle="tab" href="#actions-<%= server.SERVER_NAME %>">Actions</a>
+                                    </li>
+                                </ul>
+                                <div class="tab-content mt-2">
+                                    <div class="tab-pane fade show active" id="memory-<%= server.SERVER_NAME %>">
+                                        <canvas id="memory-chart-<%= server.SERVER_NAME %>" height="200"></canvas>
+                                    </div>
+                                    <div class="tab-pane fade" id="cpu-<%= server.SERVER_NAME %>">
+                                        <canvas id="cpu-chart-<%= server.SERVER_NAME %>" height="200"></canvas>
+                                    </div>
+                                    <div class="tab-pane fade" id="actions-<%= server.SERVER_NAME %>">
+                                        <button class="btn btn-info w-100" onclick="sendRconCommand('<%= server.SERVER_NAME %>', 'saveworld')">
+                                            <i class="fas fa-save"></i> Save
+                                        </button>
+                                        <button class="btn btn-primary w-100" onclick="openBroadcastModal('<%= server.SERVER_NAME %>')">
+                                            <i class="fas fa-bullhorn"></i> Broadcast
+                                        </button>
+                                        <button class="btn btn-dark w-100" onclick="shutdownServer('<%= server.SERVER_NAME %>')">
+                                            <i class="fas fa-power-off"></i> Delayed Shutdown
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <% }) %>
+            </div>
+        </section>
+    </div>
+
+    <%- include('partials/modals') %>
+    <%- include('partials/footer', { page: "index" }) %>
+</body>
+</html>
