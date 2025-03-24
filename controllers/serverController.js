@@ -10,6 +10,7 @@ const configPath = path.join(__dirname, '../config/config.json');
 const availableMaps = process.env.AVAILABLE_MAPS.split(',');
 
 let intervalId = null;
+let previousServersStatus = null;
 
 /*=======================================================================
  *                         CONFIGURATION FUNCTIONS
@@ -190,9 +191,10 @@ async function startServer(req, res) {
         console.log(server.SERVER_NAME);
 
         // Start Docker server
-        dockerService.executeStartServer(server.SERVER_NAME);
+        await dockerService.executeStartServer(server.SERVER_NAME);
 
         // Start Monitoring
+        monitorsService.updateMonitoringCache();
         monitorsService.monitorServerState(server.SERVER_NAME);
 
         res.json({ message: `Server ${server.SERVER_NAME} is starting.` });
@@ -232,10 +234,15 @@ async function restartServer(req, res) {
             return res.status(404).json({ error: "Server not found - restartServer" });
         }
 
-        await dockerService.executeRestartServer(server);
+        await dockerService.executeRestartServer(serverName);
 
-        // Start monitoring after Docker restart
-        monitorsService.monitorServerState(serverName);
+        // Start monitoring after Docker restart (3s)
+        setTimeout(() => {
+            monitorsService.updateMonitoringCache();
+            monitorsService.monitorServerState(serverName);
+        }, 3000); // 3 secondes par exemple
+
+        
 
         res.json({ message: `Server ${serverName} is restarting...` });
     } catch (error) {
@@ -244,43 +251,28 @@ async function restartServer(req, res) {
     }
 }
 
-/**
- * Retrieves the status (ON/OFF) of a specific server.
- * @param {Object} req - Express request object.
- * @param {Object} res - Express response object.
- * @returns {void} Sends a JSON response with server status.
- */
-async function getStatus(req, res) {
-    const { serverName } = req.params;
-    try {
-        const statusInfo = await dockerService.isServerRunning(serverName);
+// /**
+//  * Retrieves the status (ON/OFF) of a specific server.
+//  * @param {Object} req - Express request object.
+//  * @param {Object} res - Express response object.
+//  * @returns {void} Sends a JSON response with server status.
+//  */
+// async function getStatus(req, res) {
+//     const { serverName } = req.params;
+//     try {
+//         const statusInfo = await dockerService.isServerRunning(serverName);
 
-        res.json({
-            server: serverName,
-            status: statusInfo.status,
-            details: statusInfo.details
-        });
+//         res.json({
+//             server: serverName,
+//             status: statusInfo.status,
+//             details: statusInfo.details
+//         });
 
-    } catch (err) {
-        console.error(`❌ Error fetching status for ${serverName}:`, err.message);
-        res.status(500).json({ error: "Failed to get server status." });
-    }
-}
-
-/**
- * Starts periodic checking of servers and broadcasts their status via WebSocket.
- * @param {Object} wss - WebSocket server instance.
- * @returns {void}
- */
-function startPeriodicCheck(wss) {
-    if (intervalId) clearInterval(intervalId);
-
-    intervalId = setInterval(async () => {
-        const serversStatus = await fetchAllServersStatus();
-        broadcastServerUpdate(wss, serversStatus);
-    }, 10000); // Interval in ms (10 sec)
-}
-
+//     } catch (err) {
+//         console.error(`❌ Error fetching status for ${serverName}:`, err.message);
+//         res.status(500).json({ error: "Failed to get server status." });
+//     }
+// }
 
 /**
  * Returns the status and stats of all servers + host stats.
@@ -289,11 +281,11 @@ function startPeriodicCheck(wss) {
 */
 async function getAllServersStatus(req, res) {
     try {
-        //const result = await fetchAllServersStatus();
-        console.debug(result);
+        const result = await fetchAllServersStatus();
+        //console.debug(result);
         res.json(result);
     } catch (err) {
-        console.error("❌ Error in /api/servers/status/all:", err.message);
+        console.error("❌ Error in /api/server/status/all:", err.message);
         res.status(500).json({
             message: "Internal server error while fetching server stats."
         });
@@ -346,9 +338,52 @@ async function fetchAllServersStatus() {
 }
 
 /**
- * Broadcasts server status updates via WebSocket.
- * @param {Object} wss - WebSocket server instance.
- * @param {Array} serversStatus - List of server statuses.
+ * Vérifie si le statut a changé depuis la dernière vérification.
+ * @param {Object} newStatus - Nouveau statut à vérifier.
+ * @returns {boolean} - true si changement détecté, sinon false.
+ */
+function hasStatusChanged(newStatus) {
+    return JSON.stringify(newStatus) !== JSON.stringify(previousServersStatus);
+}
+
+/**
+ * Lance la vérification périodique (60 sec) des serveurs avec mise à jour conditionnelle via WebSocket.
+ * @param {Object} wss - Instance WebSocket Server.
+ * @returns {void}
+ */
+function startPeriodicCheck(wss) {
+    if (intervalId) clearInterval(intervalId);
+
+    intervalId = setInterval(async () => {
+        await monitorsService.updateMonitoringCache();
+        const serversStatus = await fetchAllServersStatus();
+
+        if (hasStatusChanged(serversStatus)) {
+            previousServersStatus = serversStatus;
+            broadcastServerUpdate(wss, serversStatus);
+        }
+    }, 60000); // Chaque 60 secondes
+}
+
+/**
+ * Diffuse immédiatement un événement précis via WebSocket.
+ * @param {Object} wss - Instance WebSocket Server.
+ * @param {String} event - Type d'événement.
+ * @param {Object} data - Données de l'événement.
+ * @returns {void}
+ */
+function broadcastImmediateEvent(wss, event, data) {
+    wss.clients.forEach(client => {
+        if (client.readyState === 1) {
+            client.send(JSON.stringify({ event, data }));
+        }
+    });
+}
+
+/**
+ * Diffuse les statuts des serveurs à tous les clients WebSocket.
+ * @param {Object} wss - Instance WebSocket Server.
+ * @param {Array} serversStatus - Liste des statuts des serveurs.
  * @returns {void}
  */
 function broadcastServerUpdate(wss, serversStatus) {
@@ -370,7 +405,6 @@ module.exports = {
     updateServer,
     deleteServer,
     startPeriodicCheck,
-    getStatus,
     getAllServersStatus,
     startServer,
     stopServer,

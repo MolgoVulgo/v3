@@ -9,7 +9,7 @@
  */
 async function loadServers() {
     try {
-        const response = await fetch("/api/servers");
+        const response = await fetch("/api/server");
         const servers = await response.json();
         const currentPage = document.body.dataset.page;
 
@@ -108,7 +108,7 @@ function attachServerControls() {
  */
 async function startServer(serverName) {
     try {
-        const response = await fetch(`/api/servers/${serverName}/start`, { method: "POST" });
+        const response = await fetch(`/api/server/${serverName}/action/start`, { method: "POST" });
         if (!response.ok) throw new Error(`Error starting server ${serverName}`);
         updateServerStatus(serverName);
     } catch (error) {
@@ -124,7 +124,7 @@ async function startServer(serverName) {
  */
 async function stopServer(serverName) {
     try {
-        const response = await fetch(`/api/servers/${serverName}/stop`, { method: "POST" });
+        const response = await fetch(`/api/server/${serverName}/action/stop`, { method: "POST" });
         if (!response.ok) throw new Error(`Error stopping server ${serverName}`);
         updateServerStatus(serverName);
     } catch (error) {
@@ -140,7 +140,7 @@ async function stopServer(serverName) {
  */
 async function restartServer(serverName) {
     try {
-        const response = await fetch(`/api/servers/${serverName}/restart`, { method: "POST" });
+        const response = await fetch(`/api/server/${serverName}/action/restart`, { method: "POST" });
         if (!response.ok) throw new Error(`Error restarting server ${serverName}`);
         updateServerStatus(serverName);
     } catch (error) {
@@ -149,52 +149,98 @@ async function restartServer(serverName) {
 }
 
 /*=======================================================================
- *                     STATUS UPDATES
+ *                     STATUS UPDATES (Monitoring)
  *======================================================================*/
 
 /**
- * Updates the server's visual status on the dashboard.
- * 
- * @param {string} serverName - Name of the server.
- * @returns {Promise<void>}
+ * Formats memory bytes to GB string.
+ * @param {number} used - Memory used in bytes.
+ * @param {number} total - Total memory in bytes.
+ * @returns {string}
  */
-async function updateServerStatus(serverName) {
-    try {
-        const response = await fetch(`/api/servers/${serverName}/status`);
-        if (!response.ok) throw new Error("Failed to fetch server status");
-
-        const data = await response.json();
-        const statusElement = document.getElementById(`status-hidden-${serverName}`);
-
-        if (!statusElement) return;
-
-        statusElement.textContent = data.state;
-
-        const headerElement = document.getElementById(`server-name-${serverName}`);
-        headerElement.classList.remove("bg-success", "bg-warning", "bg-secondary");
-
-        if (data.state === "running") {
-            headerElement.classList.add("bg-success");
-        } else if (data.state === "startup") {
-            headerElement.classList.add("bg-warning");
-        } else {
-            headerElement.classList.add("bg-secondary");
-        }
-
-    } catch (error) {
-        console.error(`Error updating server status for ${serverName}:`, error);
-    }
+function formatMemory(used, total) {
+    const usedGB = (used / (1024 ** 3)).toFixed(2);
+    const totalGB = (total / (1024 ** 3)).toFixed(2);
+    //return `${usedGB} / ${totalGB}`;
+    return `${usedGB}`;
 }
 
 /**
- * Refreshes all servers' status on the dashboard.
- * 
- * @returns {Promise<void>}
+ * Formats CPU usage float to percentage (no % symbol, it's in HTML)
+ * @param {number} cpuUsage
+ * @returns {string}
  */
-async function refreshAllServersStatus() {
-    const response = await fetch("/api/servers");
-    const servers = await response.json();
-    servers.forEach(server => {
-        updateServerStatus(server.SERVER_NAME);
-    });
+function formatCPU(cpuUsage) {
+    if (typeof cpuUsage === 'number' && !isNaN(cpuUsage)) {
+        return cpuUsage.toFixed(2);
+    }
+    return "N/A";
 }
+
+/*=======================================================================
+ *                     INITIALIZATION
+ *======================================================================*/
+
+document.addEventListener("DOMContentLoaded", async () => {
+    await loadServers();
+    //await refreshAllServersStatus();
+
+    // Auto-refresh every 10s
+    setInterval(() => {
+        //refreshAllServersStatus();
+    }, 10000); // 10 sec
+});
+
+
+// Message handler
+socket.addEventListener('message', (event) => {
+    const data = JSON.parse(event.data);
+
+    // Status updates pushed
+    if (data.type === 'statusUpdate' && data.servers) {
+        Object.keys(data.servers).forEach(serverName => {
+            const serverData = data.servers[serverName];
+
+            // Update status
+            const statusElement = document.getElementById(`status-hidden-${serverName}`);
+            if (statusElement) statusElement.textContent = serverData.status;
+
+            const headerElement = document.getElementById(`server-name-${serverName}`);
+            if (headerElement) {
+                headerElement.classList.remove("bg-success", "bg-warning", "bg-secondary");
+
+                if (serverData.status === "running") {
+                    headerElement.classList.add("bg-success");
+                } else if (serverData.status === "startup") {
+                    headerElement.classList.add("bg-warning");
+                } else {
+                    headerElement.classList.add("bg-secondary");
+                }
+            }
+
+            // Update CPU
+            const cpuElement = document.getElementById(`cpu-${serverName}`);
+            if (cpuElement && serverData.CPU_USAGE !== undefined) {
+                cpuElement.textContent = formatCPU(serverData.CPU_USAGE);
+            }
+
+            // Update Memory
+            const memElement = document.getElementById(`memory-${serverName}`);
+            if (memElement && serverData.MEMORY_USAGE) {
+                memElement.textContent = formatMemory(
+                    serverData.MEMORY_USAGE.used,
+                    serverData.MEMORY_USAGE.total
+                );
+            }
+        });
+    }
+
+    // Log updates (déjà en place)
+    if (data.type === 'log' && data.serverName && data.state) {
+        const logElement = document.getElementById(`log-${data.serverName}`);
+        if (logElement) {
+            logElement.textContent += `\n${data.state}`;
+            logElement.scrollTop = logElement.scrollHeight;
+        }
+    }
+});

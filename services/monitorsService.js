@@ -1,137 +1,126 @@
 const { spawn } = require("child_process");
-const fs = require("fs");
-const path = require("path");
 const uiService = require("./uiService");
-const dockerService = require("./dockerService");
+const cache = require('../utils/cache');
+const dockerService = require('./dockerService');
+const { loadServersConfig } = require('../models/serverModel');
 
 const shooterGameKeywords = require("../config/ShooterGameKeyword.json");
 const dockerKeywords = require("../config/dockerKeyword.json");
-
-const activeMonitors = {}; // Store active monitoring processes
 
 /*=======================================================================
  *                         MONITORING FUNCTIONS
  *======================================================================*/
 
+let websocketInstance = null;
+
 /**
- * Monitors Docker logs until the server has completed the Steam setup.
- * 
- * @param {string} serverName - Name of the server.
- * @param {Function} callback - Function called when a keyword is found or timeout occurs.
- * @returns {void}
+ * Sets the WebSocket server instance
+ * @param {WebSocket.Server} ws
  */
-function monitorDockerLogs(serverName, callback) {
-    const containerName = `ARK-ASA-${serverName}`;
-    const dockerLogs = spawn("docker", ["logs", "-f", containerName]);
-
-    let timeout = setTimeout(() => {
-        dockerLogs.kill();
-        callback("timeout");
-    }, 60000); // 1 min timeout if no keyword is found
-
-    dockerLogs.stdout.on("data", (data) => {
-        const log = data.toString();
-
-        dockerKeywords.forEach(({ keyword, state }) => {
-            if (log.includes(keyword)) {
-                clearTimeout(timeout);
-                dockerLogs.kill();
-                callback(state);
-            }
-        });
-    });
-
-    dockerLogs.stderr.on("data", (data) => {
-        console.error(`[DOCKER ERROR] ${serverName}:`, data.toString());
-    });
-
-    dockerLogs.on("exit", (code) => {
-        console.log(`[DOCKER MONITOR] ${serverName} exited with code ${code}`);
-    });
-
-    activeMonitors[serverName] = dockerLogs;
+function setWebSocketInstance(ws) {
+    websocketInstance = ws;
 }
 
 /**
- * Monitors ShooterGame.log file to check if server startup is complete.
- * 
- * @param {string} serverName - Name of the server.
- * @param {Function} callback - Function called when a keyword is found or timeout occurs.
- * @returns {void}
+ * Sends immediate event via websocket
+ * @param {string} event
+ * @param {Object} data
  */
-function monitorShooterGameLog(serverName, callback) {
-    const logFilePath = path.join(__dirname, "..", "server-files", serverName, "ShooterGame", "Saved", "Logs", "ShooterGame.log");
-
-    if (!fs.existsSync(logFilePath)) {
-        console.warn(`[WARNING] Log file not found: ${logFilePath}`);
-        return callback("error");
+function broadcastImmediateEvent(event, data) {
+    if (websocketInstance) {
+        websocketInstance.clients.forEach(client => {
+            if (client.readyState === 1) {
+                client.send(JSON.stringify({ event, data }));
+            }
+        });
     }
-
-    const logStream = spawn("tail", ["-n", "10", "-f", logFilePath]);
-
-    let timeout = setTimeout(() => {
-        logStream.kill();
-        callback("timeout");
-    }, 300000); // 5 min timeout if startup is not completed
-
-    logStream.stdout.on("data", (data) => {
-        const log = data.toString();
-        console.log(`[SHOOTERGAME LOGS] ${serverName}:`, log);
-
-        shooterGameKeywords.forEach(({ keyword, state }) => {
-            if (log.includes(keyword)) {
-                clearTimeout(timeout);
-                logStream.kill();
-                callback(state);
-            }
-        });
-    });
-
-    logStream.stderr.on("data", (data) => {
-        console.error(`[SHOOTERGAME ERROR] ${serverName}:`, data.toString());
-    });
-
-    logStream.on("exit", (code) => {
-        console.log(`[SHOOTERGAME MONITOR] ${serverName} exited with code ${code}`);
-    });
-
-    activeMonitors[serverName] = logStream;
 }
 
 /**
- * Monitors server state (Docker + ShooterGame) and updates UI accordingly.
+ * Updates the monitoring cache: serversStatus, hostStats, containersStats
+ * @returns {Promise<void>}
+ */
+async function updateMonitoringCache() {
+    try {
+        const stats = await dockerService.getDockerStats();
+
+        cache.hostStats = {
+            CPU_USAGE: stats.CPU_USAGE,
+            MEMORY_USAGE: stats.MEMORY_USAGE
+        };
+
+        cache.containersStats = stats.containersStats;
+
+        const servers = loadServersConfig();
+
+        for (const server of servers) {
+            const status = await dockerService.isServerRunning(server.SERVER_NAME);
+            cache.serversStatus[server.SERVER_NAME] = {
+                ...server,
+                status: status,
+                detectedState: status ? 'running' : 'stopped'
+            };
+        }
+
+    } catch (err) {
+        console.error("❌ Failed to update monitoring cache:", err.message);
+    }
+}
+
+/**
+ * Monitors Docker logs and sends keyword state via WebSocket
+ * 
+ * @param {string} serverId - Server Identifier
+ * @param {string} logLine - Log line received
+ */
+async function monitorDockerLogs(serverId, logLine) {
+    for (const keywordObj of dockerKeywords) {
+        if (logLine.includes(keywordObj.keyword)) {
+            const status = keywordObj.status;
+
+            broadcastImmediateEvent('server:startup', { serverId, status });
+            cache.serversStatus[serverId].detectedState = status;
+        }
+    }
+}
+
+/**
+ * Monitors ShooterGame logs and sends keyword state via WebSocket
+ * 
+ * @param {string} serverId - Server Identifier
+ * @param {string} logLine - Log line received
+ */
+async function monitorShooterGameLog(serverId, logLine) {
+    for (const keywordObj of shooterGameKeywords) {
+        if (logLine.includes(keywordObj.keyword)) {
+            const status = keywordObj.status;
+
+            broadcastImmediateEvent('server:startup', { serverId, status });
+            cache.serversStatus[serverId].detectedState = status;
+        }
+    }
+}
+
+/**
+ * Monitors server state (Docker + ShooterGame logs) and updates UI accordingly.
  * 
  * @param {string} serverName - Name of the server.
  * @returns {void}
  */
 function monitorServerState(serverName) {
-    let detectedState = "startup";
 
-    // Monitor Docker logs first
-    monitorDockerLogs(serverName, (state) => {
-        if (state === "timeout") {
-            detectedState = "failed";
-            stopServerDueToFailure(serverName);
-            return;
-        }
+    cache.serversStatus[serverName].detectedState = "startup";
 
-        if (state === "wine ready") {
-            console.log(`[MONITOR] Docker setup completed for ${serverName}, switching to ShooterGame logs...`);
-            monitorShooterGameLog(serverName, (state) => {
-                if (state === "timeout") {
-                    detectedState = "failed";
-                    stopServerDueToFailure(serverName);
-                } else if (state === "Server running") {
-                    detectedState = "running";
-                    console.log(`[MONITOR] ${serverName} is now fully started.`);
-                }
-            });
-        }
+    dockerService.onDockerLog(serverName, (logLine) => {
+        monitorDockerLogs(serverName, logLine);
     });
 
-    // Timeout auto-stop if stuck in startup
+    dockerService.onShooterGameLog(serverName, (logLine) => {
+        monitorShooterGameLog(serverName, logLine);
+    });
+
     setTimeout(() => {
-        if (detectedState === "startup") {
+        if (cache.serversStatus[serverName].detectedState === "startup") {
             stopServerDueToFailure(serverName);
         }
     }, 300000); // 5 min timeout
@@ -147,10 +136,17 @@ function stopServerDueToFailure(serverName) {
     console.log(`[FAILURE] Server ${serverName} failed to start within 5 minutes, stopping...`);
     dockerService.executeStopServer(serverName);
     uiService.notifyUser(`Server ${serverName} failed to start and was stopped automatically.`, "danger");
+    cache.serversStatus[serverName].detectedState = "failed";
 }
 
 /*=======================================================================
  *                            EXPORTS
  *======================================================================*/
 
-module.exports = { monitorServerState };
+module.exports = { 
+    setWebSocketInstance,
+    monitorServerState,
+    updateMonitoringCache,
+    monitorDockerLogs,
+    monitorShooterGameLog
+};

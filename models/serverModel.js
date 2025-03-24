@@ -18,4 +18,21 @@ function findServerByName(serverName) {
     }
 }
 
-module.exports = { findServerByName };
+/**
+ * Returns the list of all servers from config.json.
+ * @returns {Array} List of servers.
+ */
+function loadServersConfig() {
+    try {
+        const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+        return config.SERVERS || [];
+    } catch (error) {
+        console.error("Error reading config.json:", error);
+        return [];
+    }
+}
+
+module.exports = { 
+    findServerByName,
+    loadServersConfig,
+};

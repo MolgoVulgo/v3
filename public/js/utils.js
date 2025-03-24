@@ -21,7 +21,7 @@ function generateClusterId() {
  * @returns {Promise<{nextPort: number, nextRconPort: number}>} - Object containing next available ports.
  */
 async function getNextAvailablePorts() {
-    const response = await fetch("/api/servers");
+    const response = await fetch("/api/server");
     const servers = await response.json();
 
     let maxPort = 7777; // Base value
@@ -34,3 +34,14 @@ async function getNextAvailablePorts() {
 
     return { nextPort: maxPort + 1, nextRconPort: maxRconPort + 1 };
 }
+
+
+const socket = new WebSocket(`ws://${window.location.host}`);
+
+socket.addEventListener('open', () => {
+    console.log("✅ WebSocket connection established");
+});
+
+socket.addEventListener('message', (event) => {
+    console.log("📨 WebSocket message received:", event.data);
+});
