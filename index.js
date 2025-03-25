@@ -5,6 +5,7 @@ const { Server } = require('ws');
 const serverController = require('./controllers/serverController');
 const { setWebSocketInstance: setDockerWs } = require('./services/dockerService');
 const { setWebSocketInstance: setMonitorWs } = require('./services/monitorsService');
+const { startStatsStreamingForAllContainers } = require('./services/dockerService');
 
 const config = require('./config/config.json');
 
@@ -16,8 +17,12 @@ const app = express();
 const server = http.createServer(app);
 const wss = new Server({ server });
 
+// Attach WebSocket instances to Docker & Monitor services
 setDockerWs(wss);
 setMonitorWs(wss);
+
+// Start real-time Docker stats streaming
+startStatsStreamingForAllContainers();
 
 /*========================= Middleware =========================*/
 app.use('/bootstrap', express.static(path.join(__dirname, 'node_modules/bootstrap/dist')));
@@ -59,5 +64,10 @@ app.get('/api/maps', serverController.getAvailableMaps);
 const PORT = config.webSocketPort || 8080;
 server.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
-    serverController.startPeriodicCheck(wss);
+
+    // ➤ Premier push du status général à l'init (sans polling)
+    (async () => {
+        const statusData = await serverController.fetchAllServersStatus();
+        serverController.broadcastServerUpdate(wss, statusData);
+    })();
 });

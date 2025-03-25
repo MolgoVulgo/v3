@@ -57,7 +57,7 @@
                                     </button>
                                     <button class="btn btn-danger btn-sm me-1"
                                         onclick="stopServer('<%= server.SERVER_NAME %>')"
-                                        <% if (server.status === 'off') { %> disabled <% } %>>
+                                        <% if (server.status !== 'running') { %> disabled <% } %>
                                         <i class="fas fa-stop"></i> Stop
                                     </button>
                                     <button class="btn btn-warning btn-sm"
