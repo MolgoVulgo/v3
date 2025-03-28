@@ -1,85 +1,152 @@
-/*=======================================================================
- *                     SERVER LIST MANAGEMENT (index.ejs)
- *======================================================================*/
+/**
+ * Format memory bytes to GB string
+ */
+function formatMemory(used, total) {
+    const usedGB = (used / (1024 ** 3)).toFixed(2);
+    const totalGB = (total / (1024 ** 3)).toFixed(2);
+    return `${usedGB} / ${totalGB}`;
+}
 
 /**
- * Loads the server list and updates the display on index.ejs.
- * 
- * @returns {Promise<void>}
+ * Format CPU usage as percentage
  */
-async function loadServers() {
-    try {
-        const response = await fetch("/api/server");
-        const servers = await response.json();
-        const currentPage = document.body.dataset.page;
+function formatCPU(cpuUsage) {
+    if (typeof cpuUsage === 'number' && !isNaN(cpuUsage)) {
+        return cpuUsage.toFixed(2);
+    }
+    return "N/A";
+}
 
-        if (currentPage === "index") {
-            updateServersTable(servers);
+/**
+ * Met à jour les stats CPU/MEM du host
+ */
+function updateHostStats(cpu, memory) {
+    const cpuElement = document.getElementById("cpu-usage");
+    const memElement = document.getElementById("memory-host");
+
+    if (cpuElement) cpuElement.textContent = formatCPU(cpu) + "%";
+    if (memElement && memory) {
+        memElement.textContent = formatMemory(memory.used, memory.total) + " GB";
+    }
+}
+
+/**
+ * Update a server card with new status/metrics
+ */
+function updateCardFromStatus(serverName, status, cpu, memory) {
+    const statusElement = document.getElementById(`status-hidden-${serverName}`);
+    if (statusElement) statusElement.textContent = status;
+
+    const badgeElement = document.getElementById(`status-badge-${serverName}`);
+    if (badgeElement) {
+        badgeElement.classList.remove("bg-success", "bg-warning", "bg-secondary");
+    
+        if (status === "running") {
+            badgeElement.classList.add("bg-success");
+        } else if (status === "startup") {
+            badgeElement.classList.add("bg-warning");
+        } else {
+            badgeElement.classList.add("bg-secondary");
         }
-    } catch (error) {
-        console.error("Error loading servers:", error);
+    
+        badgeElement.textContent = status;
     }
+
+    const cpuElement = document.getElementById(`cpu-${serverName}`);
+    if (cpuElement && cpu !== undefined) {
+        cpuElement.textContent = formatCPU(cpu);
+    }
+
+    const memElement = document.getElementById(`memory-${serverName}`);
+    if (memElement && memory) {
+        memElement.textContent = formatMemory(memory.used, memory.total);
+    }
+
+    // Affichage dynamique
+    const metrics = document.getElementById(`metrics-${serverName}`);
+    if (metrics) {
+        metrics.classList.toggle("d-none", status === "off");
+    }
+
+    const players = document.getElementById(`players-${serverName}-wrapper`);
+    if (players) {
+        players.classList.toggle("d-none", status !== "running");
+    }
+
+    const tabs = document.getElementById(`tabs-${serverName}`);
+    const msg = document.getElementById(`state-msg-${serverName}`);
+    if (tabs && msg) {
+        tabs.classList.toggle("d-none", status !== "running");
+        msg.classList.toggle("d-none", status === "running");
+    }
+
+    const btnStart = document.querySelector(`.btn-start[data-server="${serverName}"]`);
+    const btnStop = document.querySelector(`.btn-stop[data-server="${serverName}"]`);
+    const btnRestart = document.querySelector(`.btn-restart[data-server="${serverName}"]`);
+    if (btnStart) btnStart.disabled = status !== "off";
+    if (btnStop) btnStop.disabled = status !== "running";
+    if (btnRestart) btnRestart.disabled = status !== "running";
+
 }
 
 /**
- * Dynamically updates the display of servers in index.ejs.
- * 
- * @param {Array} servers - List of servers to display.
- * @returns {Promise<void>}
+ * Trigger UI refresh after manual server action
  */
-let hasLoadedServers = false;
+function updateServerStatus(serverName) {
+    console.debug(`🔄 Refreshing status for server: ${serverName}`);
+    const cpuElement = document.getElementById(`cpu-${serverName}`);
+    const memElement = document.getElementById(`memory-${serverName}`);
+    const logElement = document.getElementById(`log-${serverName}`);
+    const statusElement = document.getElementById(`status-hidden-${serverName}`);
 
-async function updateServersTable(servers) {
-    if (hasLoadedServers) return;
-    hasLoadedServers = true;
+    if (cpuElement) cpuElement.textContent = "N/A";
+    if (memElement) memElement.textContent = "N/A";
+    if (logElement) logElement.textContent = "Initializing...";
+    if (statusElement) statusElement.textContent = "startup";
 
-    const container = document.getElementById("servers-container");
-    container.innerHTML = "";
+    const headerElement = document.getElementById(`server-name-${serverName}`);
+    if (headerElement) {
+        headerElement.classList.remove("bg-success", "bg-warning", "bg-secondary");
+        headerElement.classList.add("bg-warning");
+    }
+}
 
+async function startServer(serverName) {
     try {
-        const response = await fetch("/templates/serverCard.hbs");
-        const templateSource = await response.text();
-        const template = Handlebars.compile(templateSource);
-
-        const groupedServers = {};
-        servers.forEach(server => {
-            if (!groupedServers[server.CLUSTER_ID]) {
-                groupedServers[server.CLUSTER_ID] = [];
-            }
-            if (!groupedServers[server.CLUSTER_ID].some(s => s.SERVER_NAME === server.SERVER_NAME)) {
-                groupedServers[server.CLUSTER_ID].push(server);
-            }
+        const response = await fetch(`/api/server/${serverName}/action/start`, {
+            method: "POST"
         });
-
-        Object.keys(groupedServers).forEach(clusterId => {
-            groupedServers[clusterId].sort((a, b) => a.SERVER_NAME.localeCompare(b.SERVER_NAME, undefined, { numeric: true }));
-        });
-
-        Object.keys(groupedServers).sort().forEach(clusterId => {
-            groupedServers[clusterId].forEach((server, index, array) => {
-                server.isFirstInCluster = index === 0;
-                server.isLastInCluster = index === array.length - 1;
-
-                const serverHTML = template(server);
-                container.innerHTML += serverHTML;
-            });
-        });
-
-        attachServerControls();
-    } catch (error) {
-        console.error("Error loading template:", error);
+        if (!response.ok) throw new Error(`Error starting server ${serverName}`);
+        updateServerStatus(serverName);
+    } catch (err) {
+        console.error("Failed to start server:", err.message);
     }
 }
 
-/*=======================================================================
- *                     SERVER ACTIONS (START/STOP/RESTART)
- *======================================================================*/
+async function stopServer(serverName) {
+    try {
+        const response = await fetch(`/api/server/${serverName}/action/stop`, {
+            method: "POST"
+        });
+        if (!response.ok) throw new Error(`Error stopping server ${serverName}`);
+        updateServerStatus(serverName);
+    } catch (err) {
+        console.error("Failed to stop server:", err.message);
+    }
+}
 
-/**
- * Attaches events to Start, Stop, Restart buttons.
- * 
- * @returns {void}
- */
+async function restartServer(serverName) {
+    try {
+        const response = await fetch(`/api/server/${serverName}/action/restart`, {
+            method: "POST"
+        });
+        if (!response.ok) throw new Error(`Error restarting server ${serverName}`);
+        updateServerStatus(serverName);
+    } catch (err) {
+        console.error("Failed to restart server:", err.message);
+    }
+}
+
 function attachServerControls() {
     document.body.addEventListener("click", async (event) => {
         const button = event.target.closest("button");
@@ -87,8 +154,6 @@ function attachServerControls() {
 
         const serverName = button.dataset.server;
         if (!serverName) return;
-
-        console.log(`🔹 Button clicked: ${button.className}, Server: ${serverName}`);
 
         if (button.classList.contains("btn-start")) {
             await startServer(serverName);
@@ -100,142 +165,40 @@ function attachServerControls() {
     });
 }
 
-/**
- * Starts a specific Ark server.
- * 
- * @param {string} serverName - Name of the server.
- * @returns {Promise<void>}
- */
-async function startServer(serverName) {
-    try {
-        const response = await fetch(`/api/server/${serverName}/action/start`, { method: "POST" });
-        if (!response.ok) throw new Error(`Error starting server ${serverName}`);
-        updateServerStatus(serverName);
-    } catch (error) {
-        console.error("Failed to start server:", error);
-    }
-}
-
-/**
- * Stops a specific Ark server.
- * 
- * @param {string} serverName - Name of the server.
- * @returns {Promise<void>}
- */
-async function stopServer(serverName) {
-    try {
-        const response = await fetch(`/api/server/${serverName}/action/stop`, { method: "POST" });
-        if (!response.ok) throw new Error(`Error stopping server ${serverName}`);
-        updateServerStatus(serverName);
-    } catch (error) {
-        console.error("Failed to stop server:", error);
-    }
-}
-
-/**
- * Restarts a specific Ark server.
- * 
- * @param {string} serverName - Name of the server.
- * @returns {Promise<void>}
- */
-async function restartServer(serverName) {
-    try {
-        const response = await fetch(`/api/server/${serverName}/action/restart`, { method: "POST" });
-        if (!response.ok) throw new Error(`Error restarting server ${serverName}`);
-        updateServerStatus(serverName);
-    } catch (error) {
-        console.error("Failed to restart server:", error);
-    }
-}
-
-/*=======================================================================
- *                     STATUS UPDATES (Monitoring)
- *======================================================================*/
-
-/**
- * Formats memory bytes to GB string.
- * @param {number} used - Memory used in bytes.
- * @param {number} total - Total memory in bytes.
- * @returns {string}
- */
-function formatMemory(used, total) {
-    const usedGB = (used / (1024 ** 3)).toFixed(2);
-    const totalGB = (total / (1024 ** 3)).toFixed(2);
-    //return `${usedGB} / ${totalGB}`;
-    return `${usedGB}`;
-}
-
-/**
- * Formats CPU usage float to percentage (no % symbol, it's in HTML)
- * @param {number} cpuUsage
- * @returns {string}
- */
-function formatCPU(cpuUsage) {
-    if (typeof cpuUsage === 'number' && !isNaN(cpuUsage)) {
-        return cpuUsage.toFixed(2);
-    }
-    return "N/A";
-}
-
-/*=======================================================================
- *                     INITIALIZATION
- *======================================================================*/
-
-document.addEventListener("DOMContentLoaded", async () => {
-    await loadServers();
-    //await refreshAllServersStatus();
-
-    // Auto-refresh every 10s
-    setInterval(() => {
-        //refreshAllServersStatus();
-    }, 10000); // 10 sec
-});
-
-
-// Message handler
 socket.addEventListener('message', (event) => {
     const data = JSON.parse(event.data);
 
-    // Status updates pushed
     if (data.type === 'statusUpdate' && data.servers) {
         Object.keys(data.servers).forEach(serverName => {
             const serverData = data.servers[serverName];
-
-            // Update status
-            const statusElement = document.getElementById(`status-hidden-${serverName}`);
-            if (statusElement) statusElement.textContent = serverData.status;
-
-            const headerElement = document.getElementById(`server-name-${serverName}`);
-            if (headerElement) {
-                headerElement.classList.remove("bg-success", "bg-warning", "bg-secondary");
-
-                if (serverData.status === "running") {
-                    headerElement.classList.add("bg-success");
-                } else if (serverData.status === "startup") {
-                    headerElement.classList.add("bg-warning");
-                } else {
-                    headerElement.classList.add("bg-secondary");
-                }
-            }
-
-            // Update CPU
-            const cpuElement = document.getElementById(`cpu-${serverName}`);
-            if (cpuElement && serverData.CPU_USAGE !== undefined) {
-                cpuElement.textContent = formatCPU(serverData.CPU_USAGE);
-            }
-
-            // Update Memory
-            const memElement = document.getElementById(`memory-${serverName}`);
-            if (memElement && serverData.MEMORY_USAGE) {
-                memElement.textContent = formatMemory(
-                    serverData.MEMORY_USAGE.used,
-                    serverData.MEMORY_USAGE.total
-                );
-            }
+            updateCardFromStatus(serverName, serverData.status, serverData.CPU_USAGE, serverData.MEMORY_USAGE);
         });
     }
 
-    // Log updates (déjà en place)
+    if (
+        data.type === "monitoring" &&
+        data.scope === "server" &&
+        data.event === "status" &&
+        data.target
+    ) {
+        const serverName = data.target;
+        const status = data.data.status;
+        const cpu = data.data.CPU_USAGE;
+        const memory = data.data.MEMORY_USAGE;
+        updateCardFromStatus(serverName, status, cpu, memory);
+    }
+
+    if (
+        data.type === "monitoring" &&
+        data.scope === "host" &&
+        data.event === "stats" &&
+        data.target === "host"
+    ) {
+        const cpu = parseFloat(data.data?.CPU_USAGE);
+        const memory = data.data?.MEMORY_USAGE;
+        updateHostStats(cpu, memory);
+    }
+
     if (data.type === 'log' && data.serverName && data.state) {
         const logElement = document.getElementById(`log-${data.serverName}`);
         if (logElement) {
@@ -243,4 +206,42 @@ socket.addEventListener('message', (event) => {
             logElement.scrollTop = logElement.scrollHeight;
         }
     }
+
+    if (
+        data.type === "monitoring" &&
+        data.scope === "server" &&
+        data.event === "log" &&
+        data.target &&
+        data.data?.message
+    ) {
+        const logElement = document.getElementById(`log-${data.target}`);
+        if (logElement) {
+            logElement.textContent += `\n${data.data.message}`;
+            logElement.scrollTop = logElement.scrollHeight;
+        }
+    }
+
+    if (
+        data.type === "monitoring" &&
+        data.scope === "container" &&
+        data.event === "stats" &&
+        data.target &&
+        data.data
+      ) {
+        const serverName = data.target;
+        const cpu = parseFloat(data.data?.CPU_USAGE);
+        const memoryUsed = data.data?.MEMORY_USAGE?.used;
+        const memoryGB = memoryUsed ? (memoryUsed / (1024 ** 3)).toFixed(2) : 'N/A';
+      
+        const cpuEl = document.getElementById(`cpu-${serverName}`);
+        const memoryEl = document.getElementById(`memory-${serverName}`);
+      
+        if (cpuEl) cpuEl.textContent = cpu.toFixed(2);
+        if (memoryEl) memoryEl.textContent = memoryGB;
+      }
+
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+    attachServerControls();
 });

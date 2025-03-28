@@ -1,85 +1,104 @@
-{{#if isFirstInCluster}}
-    <div class="col-12">
-        <h2 class="text-center text-primary mt-3">Cluster: {{CLUSTER_ID}}</h2>
-    </div>
-    <div class="row">
-{{/if}}
-
 <div class="col-md-4 mb-4">
     <div class="card server-card shadow-sm">
-        <div class="card-header text-white bg-dark text-center">
-            <h5 id="server-name-{{SERVER_NAME}}" class="mb-0 p-2 rounded">
-                {{SERVER_NAME}} <span id="status-hidden-{{SERVER_NAME}}" class="d-none"></span>
-            </h5>
+        <div id="server-name-{{SERVER_NAME}}" class="card-header text-white bg-dark text-center d-flex justify-content-between align-items-center">
+            <h5>{{SERVER_NAME}}</h5>
+            <span class="badge 
+                {{#if (eq status 'running')}} bg-success 
+                {{else if (eq status 'startup')}} bg-warning 
+                {{else}} bg-secondary {{/if}}">
+                {{status}}
+            </span>
         </div>
+
         <div class="card-body text-center">
-            <div class="mt-3">
+            {{#if (ne status 'off')}}
+                <!-- 📈 CPU & Memory Stats -->
                 <small>CPU: <span id="cpu-{{SERVER_NAME}}" class="text-info">N/A</span>%</small><br>
-                <small>Memory: <span id="memory-{{SERVER_NAME}}" class="text-warning">N/A</span> GB</small>
-            </div>
-            <div class="mt-3">
+                <small>Memory: <span id="memory-{{SERVER_NAME}}" class="text-warning">N/A</span> GB</small><br>
+            {{/if}}
+
+            {{#if (eq status 'running')}}
+                <!-- 🎮 Player Count -->
                 <small>Players: <span id="players-{{SERVER_NAME}}" class="text-primary">0</span></small>
-            </div>
+                <button class="btn btn-sm btn-info" onclick="showPlayerList('{{SERVER_NAME}}')">
+                    <i class="fas fa-users"></i> Voir
+                </button>
+            {{/if}}
+
+            <!-- 🟢 Server Controls -->
             <div class="mt-3">
-                <button class="btn btn-success btn-sm btn-start" data-server="{{SERVER_NAME}}">
+                <button class="btn btn-success btn-sm me-1 btn-start"
+                    data-server="{{SERVER_NAME}}"
+                    {{#if (ne status 'off')}} disabled {{/if}}>
                     <i class="fas fa-play"></i> Start
                 </button>
-                <button class="btn btn-danger btn-sm btn-stop" data-server="{{SERVER_NAME}}">
+                <button class="btn btn-danger btn-sm me-1 btn-stop"
+                    data-server="{{SERVER_NAME}}"
+                    {{#if (eq status 'off')}} disabled {{/if}}>
                     <i class="fas fa-stop"></i> Stop
                 </button>
-                <button class="btn btn-warning btn-sm btn-restart" data-server="{{SERVER_NAME}}">
+                <button class="btn btn-warning btn-sm btn-restart"
+                    data-server="{{SERVER_NAME}}"
+                    {{#if (ne status 'running')}} disabled {{/if}}>
                     <i class="fas fa-sync-alt"></i> Restart
                 </button>
             </div>
         </div>
-        <div class="card-footer bg-light">
-            <ul class="nav nav-tabs" id="chartTabs-{{SERVER_NAME}}" role="tablist">
-                <li class="nav-item">
-                    <button class="nav-link {{#unless ENABLED}}active{{/unless}}" data-bs-toggle="tab" data-bs-target="#info-{{SERVER_NAME}}">
-                        Info
-                    </button>
-                </li>
-                <li class="nav-item">
-                    <button class="nav-link {{#if ENABLED}}active{{/if}}" data-bs-toggle="tab" data-bs-target="#actions-{{SERVER_NAME}}">
-                        Actions
-                    </button>
-                </li>
-                <li class="nav-item">
-                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#memory-{{SERVER_NAME}}">
-                        Memory
-                    </button>
-                </li>
-                <li class="nav-item">
-                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#cpu-{{SERVER_NAME}}">
-                        CPU
-                    </button>
-                </li>
-            </ul>
-            <div class="tab-content mt-2">
-                <div class="tab-pane fade {{#if ENABLED}}show active{{/if}}" id="actions-{{SERVER_NAME}}">
-                    <p>Actions log will be displayed here.</p>
-                </div>
-                <div class="tab-pane fade" id="memory-{{SERVER_NAME}}">
-                    <p>Memory usage: <span id="memory-usage-{{SERVER_NAME}}">0MB</span></p>
-                </div>
-                <div class="tab-pane fade" id="cpu-{{SERVER_NAME}}">
-                    <p>CPU usage: <span id="cpu-usage-{{SERVER_NAME}}">0%</span></p>
-                </div>
-                <div class="tab-pane fade {{#unless ENABLED}}show active{{/unless}} p-2" id="info-{{SERVER_NAME}}">
-                    <ul class="list-group">
-                        <li class="list-group-item"><strong>Map:</strong> {{MAP_NAME}}</li>
-                        <li class="list-group-item"><strong>Mods:</strong> {{MODS}}</li>
-                        <li class="list-group-item"><strong>Port:</strong> {{PORT}}</li>
-                        <li class="list-group-item"><strong>RCON Port:</strong> {{RCON_PORT}}</li>
-                        <li class="list-group-item"><strong>Max Players:</strong> {{MAX_PLAYERS}}</li>
-                        <li class="list-group-item"><strong>Cluster ID:</strong> {{CLUSTER_ID}}</li>
-                    </ul>
+
+        <!-- 🗂️ Tabs & Footer -->
+        {{#if (eq status 'running')}}
+            <div class="card-footer bg-light">
+                <ul class="nav nav-tabs" id="server-tabs-{{SERVER_NAME}}">
+                    <li class="nav-item">
+                        <a class="nav-link active" data-bs-toggle="tab" href="#memory-{{SERVER_NAME}}">Memory</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="tab" href="#cpu-{{SERVER_NAME}}">CPU</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="tab" href="#actions-{{SERVER_NAME}}">Actions</a>
+                    </li>
+                </ul>
+                <div class="tab-content mt-2">
+                    <div class="tab-pane fade show active" id="memory-{{SERVER_NAME}}">
+                        <canvas id="memory-chart-{{SERVER_NAME}}" height="200"></canvas>
+                    </div>
+                    <div class="tab-pane fade" id="cpu-{{SERVER_NAME}}">
+                        <canvas id="cpu-chart-{{SERVER_NAME}}" height="200"></canvas>
+                    </div>
+                    <div class="tab-pane fade" id="actions-{{SERVER_NAME}}">
+                        <button class="btn btn-info w-100" onclick="sendRconCommand('{{SERVER_NAME}}', 'saveworld')">
+                            <i class="fas fa-save"></i> Save
+                        </button>
+                        <button class="btn btn-primary w-100" onclick="openBroadcastModal('{{SERVER_NAME}}')">
+                            <i class="fas fa-bullhorn"></i> Broadcast
+                        </button>
+                        <button class="btn btn-dark w-100" onclick="shutdownServer('{{SERVER_NAME}}')">
+                            <i class="fas fa-power-off"></i> Delayed Shutdown
+                        </button>
+                    </div>
                 </div>
             </div>
-        </div>
+        {{else}}
+            <div class="card-footer bg-light text-center">
+                {{#if (eq status 'startup')}}
+                    <div class="alert alert-info mb-0">
+                        <strong>Server is starting up...</strong>
+                    </div>
+                    <div class="mt-3 p-2 bg-dark text-white" style="max-height:150px; overflow-y:auto; font-size:0.85em;">
+                        <pre id="log-{{SERVER_NAME}}">Initializing...</pre>
+                    </div>
+                {{else}}
+                    <div class="alert alert-warning mb-0 text-start">
+                        <strong>Server is OFF.</strong><br>
+                        <small><strong>Map:</strong> {{MAP_NAME}}</small><br>
+                        <small><strong>Ports:</strong> {{PORT}} / RCON: {{RCON_PORT}}</small><br>
+                        <small><strong>Cluster ID:</strong> {{CLUSTER_ID}}</small><br>
+                        <small><strong>Max Players:</strong> {{MAX_PLAYERS}}</small><br>
+                        <small><strong>Mods:</strong> {{#if MODS}}{{MODS.length}}{{else}}0{{/if}} mods configured</small>
+                    </div>
+                {{/if}}
+            </div>
+        {{/if}}
     </div>
 </div>
-
-{{#if isLastInCluster}}
-    </div> <!-- Fermeture de la row -->
-{{/if}}

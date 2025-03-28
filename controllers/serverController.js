@@ -13,17 +13,11 @@ const availableMaps = process.env.AVAILABLE_MAPS.split(',');
  *                         CONFIGURATION FUNCTIONS
  *======================================================================*/
 
-/**
- * Retrieves the server configuration by its name.
- */
 function getServerConfig(serverName) {
     const config = JSON.parse(fs.readFileSync(configPath, "utf8"));
     return config.SERVERS.find(s => s.SERVER_NAME === serverName) || null;
 }
 
-/**
- * Retrieves the list of all servers.
- */
 function getServers(req, res) {
     try {
         const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
@@ -34,9 +28,6 @@ function getServers(req, res) {
     }
 }
 
-/**
- * Retrieves a specific server by its name.
- */
 function getServerByName(req, res) {
     try {
         const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
@@ -53,9 +44,6 @@ function getServerByName(req, res) {
     }
 }
 
-/**
- * Adds a new server with validation.
- */
 function addServer(req, res) {
     try {
         const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
@@ -92,9 +80,6 @@ function addServer(req, res) {
     }
 }
 
-/**
- * Updates an existing server configuration.
- */
 function updateServer(req, res) {
     try {
         const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
@@ -114,9 +99,6 @@ function updateServer(req, res) {
     }
 }
 
-/**
- * Deletes a server configuration.
- */
 function deleteServer(req, res) {
     try {
         const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
@@ -136,9 +118,6 @@ function deleteServer(req, res) {
     }
 }
 
-/**
- * Retrieves the list of available maps.
- */
 function getAvailableMaps(req, res) {
     res.json(availableMaps);
 }
@@ -147,9 +126,6 @@ function getAvailableMaps(req, res) {
  *                           DOCKER & MONITOR FUNCTIONS
  *======================================================================*/
 
-/**
- * Starts a specific Ark ASA server and triggers monitoring.
- */
 async function startServer(req, res) {
     try {
         const config = JSON.parse(fs.readFileSync(configPath, "utf8"));
@@ -159,31 +135,52 @@ async function startServer(req, res) {
             return res.status(404).json({ error: "Server not found - startServer" });
         }
 
+        console.log(`[START] Lancement du serveur ${server.SERVER_NAME}`);
+
         await dockerService.executeStartServer(server.SERVER_NAME);
+
+        console.debug(`[startup] Lancement du monitor pour ${server.SERVER_NAME}`);
+        monitorsService.updateAndNotifyStatus(server.SERVER_NAME, "startup");
+        console.debug(`[startup] Monitor démarré pour ${server.SERVER_NAME}`);
         monitorsService.monitorServerState(server.SERVER_NAME);
+
+        // Lancer streamContainerStats dynamiquement
+        const containers = await dockerService.listContainers ();
+        const targetContainer = containers.find(c =>
+            c.Names.some(name => name === `/ARK-ASA-${server.SERVER_NAME}`)
+        );
+
+        if (targetContainer) {
+            console.debug(`[STREAM] Lancement du stream Docker stats pour ${server.SERVER_NAME}`);
+            dockerService.streamContainerStats(targetContainer.Id, server.SERVER_NAME);
+            // On ne déclenche plus updateAndNotifyStatus ici : il sera appelé automatiquement par streamContainerStats
+        } else {
+            console.warn(`[WARN] Container non trouvé pour ${server.SERVER_NAME} après démarrage.`);
+        }
 
         res.json({ message: `Server ${server.SERVER_NAME} is starting.` });
     } catch (error) {
-        console.error("Error starting server:", error);
+        console.error("❌ Error starting server:", error);
         res.status(500).json({ error: "Failed to start server" });
     }
 }
 
-/**
- * Stops an Ark ASA server.
- */
 async function stopServer(req, res) {
+    const serverName = req.params.serverName;
+
     try {
-        await dockerService.executeStopServer(req.params.serverName);
-        res.status(200).json({ message: `Server ${req.params.serverName} stopped.` });
+        await dockerService.executeStopServer(serverName);
+
+        monitorsService.updateAndNotifyStatus(serverName, "off");
+
+        res.status(200).json({ message: `Server ${serverName} stopped.` });
+
     } catch (error) {
+        console.error("❌ Error stopping server:", error.message);
         res.status(500).json({ error: error.message });
     }
 }
 
-/**
- * Restarts an Ark ASA server and triggers monitoring.
- */
 async function restartServer(req, res) {
     try {
         const serverName = req.params.serverName;
@@ -194,18 +191,20 @@ async function restartServer(req, res) {
         }
 
         await dockerService.executeRestartServer(serverName);
-        monitorsService.monitorServerState(serverName);
+
+        monitorsService.updateAndNotifyStatus(serverName, "startup");
+
+        setTimeout(() => {
+            monitorsService.monitorServerState(serverName);
+        }, 3000);
 
         res.json({ message: `Server ${serverName} is restarting...` });
     } catch (error) {
-        console.error(`Error restarting server ${req.params.serverName}:`, error.message);
+        console.error(`❌ Error restarting server ${req.params.serverName}:`, error.message);
         res.status(500).json({ error: "Failed to restart server" });
     }
 }
 
-/**
- * Returns the status and stats of all servers + host stats.
- */
 async function getAllServersStatus(req, res) {
     try {
         const result = await fetchAllServersStatus();
@@ -218,11 +217,12 @@ async function getAllServersStatus(req, res) {
     }
 }
 
-/**
- * Fetches the status and statistics of all servers, including stopped ones,
- * merging them with runtime stats from the cache.
- */
 async function fetchAllServersStatus() {
+    console.debug("🔄 Refreshing all servers status...");
+    //console.debug("cache.serversStatus:", cache.serversStatus);
+    //console.debug("cache.containersStats:", cache.containersStats);
+    //console.debug("cache.hostStats:", cache.hostStats); 
+
     try {
         const configData = JSON.parse(fs.readFileSync(configPath, 'utf8'));
         const allServers = configData.SERVERS;
@@ -230,11 +230,13 @@ async function fetchAllServersStatus() {
 
         allServers.forEach(server => {
             const serverName = server.SERVER_NAME;
-            const serverStatus = cache.serversStatus[serverName] || { running: false };
+
+            const dynamic = cache.serversStatus[serverName] || { status: 'off', detectedState: 'off' };
             const containerStat = cache.containersStats[serverName];
 
             serversWithStats[serverName] = {
-                ...serverStatus,
+                ...server,
+                ...dynamic,
                 CPU_USAGE: containerStat ? containerStat.CPU_USAGE : "N/A",
                 MEMORY_USAGE: containerStat ? containerStat.MEMORY_USAGE : "N/A"
             };
@@ -250,9 +252,6 @@ async function fetchAllServersStatus() {
     }
 }
 
-/**
- * Broadcasts servers' statuses and host stats to all WebSocket clients.
- */
 function broadcastServerUpdate(wss, serversStatus) {
     Object.keys(serversStatus.servers).forEach(serverName => {
         const server = serversStatus.servers[serverName];
@@ -275,7 +274,6 @@ function broadcastServerUpdate(wss, serversStatus) {
         });
     });
 
-    // Send host stats
     wss.clients.forEach(client => {
         if (client.readyState === 1) {
             client.send(JSON.stringify({

@@ -3,9 +3,9 @@ const http = require('http');
 const path = require('path');
 const { Server } = require('ws');
 const serverController = require('./controllers/serverController');
-const { setWebSocketInstance: setDockerWs } = require('./services/dockerService');
-const { setWebSocketInstance: setMonitorWs } = require('./services/monitorsService');
-const { startStatsStreamingForAllContainers } = require('./services/dockerService');
+const { setWebSocketInstance: setDockerWs } = require('./services/dockerService'),
+      { setWebSocketInstance: setMonitorWs } = require('./services/monitorsService');
+const { initMonitoring } = require('./services/monitorsService');
 
 const config = require('./config/config.json');
 
@@ -20,9 +20,9 @@ const wss = new Server({ server });
 // Attach WebSocket instances to Docker & Monitor services
 setDockerWs(wss);
 setMonitorWs(wss);
-
-// Start real-time Docker stats streaming
-startStatsStreamingForAllContainers();
+(async () => {
+    await initMonitoring(); // ← autorisé ici
+  })();
 
 /*========================= Middleware =========================*/
 app.use('/bootstrap', express.static(path.join(__dirname, 'node_modules/bootstrap/dist')));
@@ -36,6 +36,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 /*========================= Frontend =========================*/
 app.get('/', async (req, res) => {
     const statusData = await serverController.fetchAllServersStatus();
+    //console.debug('statusData:', statusData);   
     res.render('index', { servers: statusData.servers, hostStats: statusData.hostStats });
 });
 
