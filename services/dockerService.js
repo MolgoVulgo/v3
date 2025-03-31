@@ -66,23 +66,15 @@ function dockerRequest(path, method = 'GET', data = null, isStream = false) {
         }
 
         const req = http.request(options, res => {
+            if (isStream) {
+                return resolve(res); // ← ✅ on retourne directement le flux brut
+            }
+
             let responseData = '';
             res.on('data', chunk => { responseData += chunk; });
             res.on('end', () => {
                 if (res.statusCode >= 200 && res.statusCode < 300) {
-                    if (isStream) {
-                        const lines = responseData.trim().split('\n');
-                        const parsedLines = lines.map(line => {
-                            try {
-                                return JSON.parse(line);
-                            } catch {
-                                return { raw: line };
-                            }
-                        });
-                        resolve(parsedLines);
-                    } else {
-                        resolve(responseData ? JSON.parse(responseData) : {});
-                    }
+                    resolve(responseData ? JSON.parse(responseData) : {});
                 } else if (res.statusCode === 404) {
                     resolve(null);
                 } else {
@@ -127,7 +119,7 @@ async function streamContainerStats(containerId, containerName) {
                 lines.forEach(line => {
                     try {
                         const stat = JSON.parse(line);
-        //console.debug(`[STATS] Nouvelle donnée pour ${containerName}:`, stat);
+                        //console.debug(`[STATS] Nouvelle donnée pour ${containerName}:`, stat);
                         const cpuPercent = calculateCPUPercentage(stat);
                         const rawUsage = stat.memory_stats?.usage || 0;
                         const file = stat.memory_stats?.stats?.file || 0;
@@ -303,10 +295,10 @@ async function setPermissions() {
         User: "root",
         HostConfig: {
             Binds: [
-                path.resolve('../steam') + ':/steam:rw',
-                path.resolve('../steamcmd') + ':/steamcmd:rw',
-                path.resolve('../cluster-shared') + ':/cluster-shared:rw',
-                path.resolve('../server-files') + ':/server-files:rw'
+                path.resolve('./steam') + ':/steam:rw',
+                path.resolve('./steamcmd') + ':/steamcmd:rw',
+                path.resolve('./cluster-shared') + ':/cluster-shared:rw',
+                path.resolve('./server-files') + ':/server-files:rw'
             ],
             AutoRemove: true
         }
@@ -326,10 +318,10 @@ async function createServerContainer(server) {
     await removeContainer(containerName);
 
     const binds = [
-        path.resolve(`../server-files/${server.SERVER_NAME}`) + ':/home/gameserver/server-files:rw',
-        path.resolve(`../steam`) + ':/home/gameserver/steam:rw',
-        path.resolve(`../steamcmd`) + ':/home/gameserver/steamcmd:rw',
-        path.resolve(`../cluster-shared`) + ':/home/gameserver/cluster-shared:rw',
+        path.resolve(`./server-files/${server.SERVER_NAME}`) + ':/home/gameserver/server-files:rw',
+        path.resolve(`./steam`) + ':/home/gameserver/steam:rw',
+        path.resolve(`./steamcmd`) + ':/home/gameserver/steamcmd:rw',
+        path.resolve(`./cluster-shared`) + ':/home/gameserver/cluster-shared:rw',
         '/etc/localtime:/etc/localtime:ro'
     ];
 
