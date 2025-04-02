@@ -108,6 +108,10 @@ async function monitorDockerLogs(serverName, containerName) {
 
             const stream = await dockerService.streamDockerLogs(containerName);
             
+            console.debug(`[monitorDockerLogs] Type de stream:`, typeof stream);
+            console.debug(`[monitorDockerLogs] Stream prototype:`, Object.getPrototypeOf(stream));
+            console.debug(`[monitorDockerLogs] stream.on:`, typeof stream?.on);
+
             const rl = readline.createInterface({
                 input: stream,
                 crlfDelay: Infinity

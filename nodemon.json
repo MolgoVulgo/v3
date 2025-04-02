@@ -1,0 +1,15 @@
+{
+    "watch": ["."],
+    "ignore": [
+      "server-files",
+      "server-files/**",
+      "steamcmd",
+      "steamcmd/**",
+      "steam",
+      "steam/**",
+      "cluster-shared",
+      "cluster-shared/**"
+    ],
+    "ext": "js,json,ejs",
+    "exec": "node index.js"
+  }
