@@ -11,6 +11,16 @@
       "MODS": "",
       "CLUSTER_ID": "27478b61-c26a-44bf-8bac-18a30ca5b4ec",
       "ENABLED": true
+    },
+    {
+      "SERVER_NAME": "Aberation",
+      "MAP_NAME": "Aberation",
+      "PORT": 7782,
+      "RCON_PORT": 27024,
+      "MAX_PLAYERS": 10,
+      "MODS": "",
+      "CLUSTER_ID": "27478b61-c26a-44bf-8bac-18a30ca5b4ec",
+      "ENABLED": true
     }
   ]
 }

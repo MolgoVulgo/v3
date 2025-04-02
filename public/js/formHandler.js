@@ -54,7 +54,7 @@ document.getElementById("server-form").addEventListener("submit", async (event) 
         ENABLED: document.getElementById("enabled").checked
     };
 
-    await fetch("/api/servers", {
+    await fetch("/api/server", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(serverData)

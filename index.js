@@ -1,136 +1,74 @@
-/**
- * @file index.js
- * @description Main server file that sets up the Express application, WebSocket server,
- * and routes for managing servers.
- */
-
 const express = require('express');
 const http = require('http');
 const path = require('path');
 const { Server } = require('ws');
 const serverController = require('./controllers/serverController');
+const { setWebSocketInstance: setDockerWs } = require('./services/dockerService'),
+      { setWebSocketInstance: setMonitorWs } = require('./services/monitorsService');
+const { initMonitoring } = require('./services/monitorsService');
+
 const config = require('./config/config.json');
+
+const serverRoutes = require('./routes/serverRoutes');
+const monitoringRoutes = require('./routes/monitoringRoutes');
+const rconRoutes = require('./routes/rconRoutes'); // Préparé !
 
 const app = express();
 const server = http.createServer(app);
 const wss = new Server({ server });
 
-/*=======================================================================
- *                        Middleware Configuration
- *======================================================================*/
+// Attach WebSocket instances to Docker & Monitor services
+setDockerWs(wss);
+setMonitorWs(wss);
+(async () => {
+    await initMonitoring(); // ← autorisé ici
+  })();
 
-// Serve Bootstrap and Handlebars from node_modules
+/*========================= Middleware =========================*/
 app.use('/bootstrap', express.static(path.join(__dirname, 'node_modules/bootstrap/dist')));
 app.use('/handlebars', express.static(path.join(__dirname, 'node_modules/handlebars/dist')));
 
-// Set EJS as the templating engine
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
-
 app.use(express.json());
-app.use(express.static(path.join(__dirname, 'public'))); // Serve static files
+app.use(express.static(path.join(__dirname, 'public')));
 
-/*=======================================================================
- *                        Front-end Routes
- *======================================================================*/
-
-/**
- * GET /
- * Displays the dashboard page.
- * @param {express.Request} req - Express request object.
- * @param {express.Response} res - Express response object.
- */
+/*========================= Frontend =========================*/
 app.get('/', async (req, res) => {
     const statusData = await serverController.fetchAllServersStatus();
+    //console.debug('statusData:', statusData);   
     res.render('index', { servers: statusData.servers, hostStats: statusData.hostStats });
 });
 
-/**
- * GET /servers
- * Displays the server management page.
- * @param {express.Request} req - Express request object.
- * @param {express.Response} res - Express response object.
- */
 app.get('/servers', (req, res) => {
     res.render('servers');
 });
 
-/**
- * GET /templates/:filename
- * Retrieves a Handlebars template file.
- * @param {express.Request} req 
- * @param {express.Response} res 
- */
 app.get("/templates/:filename", (req, res) => {
     const filename = req.params.filename;
-
-    // Security check: prevent directory traversal
     if (!filename.match(/^[a-zA-Z0-9_-]+\.hbs$/)) {
         return res.status(400).send("Invalid file request.");
     }
-
     const filePath = path.join(__dirname, "public", "templates", filename);
     res.sendFile(filePath);
 });
 
-/*=======================================================================
- *                       API Routes for Servers
- *======================================================================*/
+/*========================= API Routes =========================*/
+app.use('/api/server', serverRoutes);
+app.use('/api/monitoring', monitoringRoutes);
+app.use('/api/rcon', rconRoutes);
 
-// GET all servers
-app.get('/api/servers', serverController.getServers);
-
-// POST add a new server
-//app.post('/api/servers', serverController.addServer);
-
-// DELETE server by name
-//app.delete('/api/servers/:serverName', serverController.deleteServer);
-
-// GET specific server details
-app.get('/api/servers/:serverName', serverController.getServerByName);
-
-// PUT update an existing server
-app.put('/api/servers/:serverName', serverController.updateServer);
-
-// POST start server
-app.post("/api/servers/:serverName/start", serverController.startServer);
-
-// (Optional GET route for start, if used by client)
-//app.get("/api/servers/:serverName/start", serverController.startServer);
-
-// POST stop server
-app.post("/api/servers/:serverName/stop", serverController.stopServer);
-
-// POST restart server
-//app.post("/api/servers/:serverName/restart", serverController.restartServer);
-
-// GET server status
-//app.get("/api/servers/:serverName/status", serverController.getStatus);
-
-// GET all server status
-app.get("/api/servers/status", serverController.getAllServersStatus);
-
-/*=======================================================================
- *                       Other API Routes
- *======================================================================*/
-
-/**
- * GET /api/maps
- * Retrieves the list of available maps.
- * @param {express.Request} req 
- * @param {express.Response} res 
- */
+// GET maps
 app.get('/api/maps', serverController.getAvailableMaps);
 
-/*=======================================================================
- *                        Server Initialization
- *======================================================================*/
-
-/**
- * Starts the HTTP server and launches periodic server status checks.
- */
+/*========================= Server Init =========================*/
 const PORT = config.webSocketPort || 8080;
 server.listen(PORT, () => {
-    console.log(`Server running on port http://localhost:${PORT}`);
-    serverController.startPeriodicCheck(wss);
+    console.log(`Server running on http://localhost:${PORT}`);
+
+    // ➤ Premier push du status général à l'init (sans polling)
+    (async () => {
+        const statusData = await serverController.fetchAllServersStatus();
+        serverController.broadcastServerUpdate(wss, statusData);
+    })();
 });

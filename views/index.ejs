@@ -1,69 +1,133 @@
 <!DOCTYPE html>
 <html lang="en">
-    <%- include('partials/header', { title: "Manage Servers - Ark ASA" }) %>
-<body data-page="index">
-    <header class="bg-dark text-white p-3 mb-4">
-        <div class="container">
-            <h1>Ark ASA Server Dashboard</h1>
-            <nav>
-                <a href="/servers" class="btn btn-secondary">Manage Servers</a>
-            </nav>
-        </div>
-    </header>
+<%- include('partials/header', { title: "Ark ASA - Dashboard" }) %>
+<body data-page="servers">
+<%- include('partials/navbar') %>
 
-    <main class="container">
-        <section id="server-stats" class="mb-4">
-            <h2>Global Statistics</h2>
-            <div class="stats-container row">
-                <div class="col"><p>Total Servers: <span id="total-servers">0</span></p></div>
-                <div class="col"><p>Active Servers: <span id="active-servers">0</span></p></div>
-                <div class="col"><p>Total Players: <span id="total-players">0</span></p></div>
-                <div class="col"><p>CPU Usage: <span id="cpu-usage">0%</span></p></div>
-                <div class="col"><p>Memory Usage: <span id="memory-usage">0MB</span></p></div>
+<div class="container mt-4">
+    <h1 class="text-center mb-4">Ark Server Dashboard</h1>
+
+    <!-- 📊 Global Statistics -->
+    <section id="server-stats" class="mb-4">
+        <div class="row text-center">
+            <div class="col-md-3"><strong>Total Servers:</strong> <span id="total-servers">0</span></div>
+            <div class="col-md-3"><strong>Active Servers:</strong> <span id="active-servers">0</span></div>
+            <div class="col-md-3"><strong>Total Players:</strong> <span id="total-players">0</span></div>
+            <div class="col-md-3">
+                <strong>Host CPU:</strong> <span id="cpu-usage">N/A</span><br>
+                <strong>Host RAM:</strong> <span id="memory-host">N/A</span>
             </div>
-            <canvas id="performanceChart" class="my-3"></canvas>
-        </section>
+        </div>
+    </section>
 
-        <!-- Servers Section -->
-        <section id="server-list">
-            <h2>Servers</h2>
-            <div class="row" id="servers-container">
-                <% Object.values(servers).forEach(server => { %>
-                    <div class="col-md-4 mb-4">
-                        <div class="card server-card shadow-sm">
-                            <div class="card-header text-white bg-dark text-center">
-                                <h5 id="server-name-<%= server.SERVER_NAME %>" class="mb-0 p-2 rounded">
-                                    <%= server.SERVER_NAME %> 
-                                    <span id="status-hidden-<%= server.SERVER_NAME %>" class="d-none">off</span>
-                                </h5>
+    <!-- 🎮 Server List -->
+    <section id="server-list">
+        <div class="row">
+            <% Object.values(servers).forEach(server => { %>
+                <div class="col-md-4 mb-4">
+                    <div class="card server-card shadow-sm">
+                        <div class="card-header text-white bg-dark text-center d-flex justify-content-between align-items-center">
+                            <h5 id="server-name-<%= server.SERVER_NAME %>"><%= server.SERVER_NAME %></h5>
+                            <span id="status-hidden-<%= server.SERVER_NAME %>" class="d-none"><%= server.status %></span>
+                            <span id="status-badge-<%= server.SERVER_NAME %>" class="badge 
+                                <% if (server.status === 'running') { %> bg-success 
+                                <% } else if (server.status === 'startup') { %> bg-warning 
+                                <% } else { %> bg-secondary <% } %>">
+                                <%= server.status %>
+                            </span>
+                        </div>
+
+                        <div class="card-body text-center">
+                            <div id="metrics-<%= server.SERVER_NAME %>" class="<%= server.status === 'off' ? 'd-none' : '' %>">
+                                <small>CPU: <span id="cpu-<%= server.SERVER_NAME %>" class="text-info">N/A</span>%</small><br>
+                                <small>Memory: <span id="memory-<%= server.SERVER_NAME %>" class="text-warning">N/A</span> GB</small><br>
                             </div>
-                            <div class="card-body text-center">
-                                <div class="mt-3">
-                                    <small>CPU: <span id="cpu-<%= server.SERVER_NAME %>" class="text-info">N/A</span>%</small><br>
-                                    <small>Memory: <span id="memory-<%= server.SERVER_NAME %>" class="text-warning">N/A</span> GB</small>
+
+                            <div id="players-<%= server.SERVER_NAME %>-wrapper" class="<%= server.status === 'running' ? '' : 'd-none' %>">
+                                <small>Players: <span id="players-<%= server.SERVER_NAME %>" class="text-primary">0</span></small>
+                            </div>
+
+                            <div class="mt-3" id="buttons-<%= server.SERVER_NAME %>">
+                                <button class="btn btn-success btn-sm me-1 btn-start"
+                                    data-server="<%= server.SERVER_NAME %>"
+                                    <% if (server.status !== 'off') { %> disabled <% } %>>
+                                    <i class="fas fa-play"></i> Start
+                                </button>
+                                <button class="btn btn-danger btn-sm me-1 btn-stop"
+                                    data-server="<%= server.SERVER_NAME %>"
+                                    <% if (server.status !== 'running') { %> disabled <% } %>>
+                                    <i class="fas fa-stop"></i> Stop
+                                </button>
+                                <button class="btn btn-warning btn-sm btn-restart"
+                                    data-server="<%= server.SERVER_NAME %>"
+                                    <% if (server.status !== 'running') { %> disabled <% } %>>
+                                    <i class="fas fa-sync-alt"></i> Restart
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="card-footer bg-light">
+                            <div id="tabs-<%= server.SERVER_NAME %>" class="<%= server.status === 'running' ? '' : 'd-none' %>">
+                                <ul class="nav nav-tabs" id="server-tabs-<%= server.SERVER_NAME %>">
+                                    <li class="nav-item">
+                                        <a class="nav-link active" data-bs-toggle="tab" href="#memory-<%= server.SERVER_NAME %>">Memory</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" data-bs-toggle="tab" href="#cpu-<%= server.SERVER_NAME %>">CPU</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" data-bs-toggle="tab" href="#actions-<%= server.SERVER_NAME %>">Actions</a>
+                                    </li>
+                                </ul>
+                                <div class="tab-content mt-2">
+                                    <div class="tab-pane fade show active" id="memory-<%= server.SERVER_NAME %>">
+                                        <canvas id="memory-chart-<%= server.SERVER_NAME %>" height="200"></canvas>
+                                    </div>
+                                    <div class="tab-pane fade" id="cpu-<%= server.SERVER_NAME %>">
+                                        <canvas id="cpu-chart-<%= server.SERVER_NAME %>" height="200"></canvas>
+                                    </div>
+                                    <div class="tab-pane fade" id="actions-<%= server.SERVER_NAME %>">
+                                        <button class="btn btn-info w-100" onclick="sendRconCommand('<%= server.SERVER_NAME %>', 'saveworld')">
+                                            <i class="fas fa-save"></i> Save
+                                        </button>
+                                        <button class="btn btn-primary w-100" onclick="openBroadcastModal('<%= server.SERVER_NAME %>')">
+                                            <i class="fas fa-bullhorn"></i> Broadcast
+                                        </button>
+                                        <button class="btn btn-dark w-100" onclick="shutdownServer('<%= server.SERVER_NAME %>')">
+                                            <i class="fas fa-power-off"></i> Delayed Shutdown
+                                        </button>
+                                    </div>
                                 </div>
-                                <div class="mt-3">
-                                    <small>Players: <span id="players-<%= server.SERVER_NAME %>" class="text-primary">0</span></small>
-                                </div>
-                                <div class="mt-3">
-                                    <button class="btn btn-success btn-sm me-1 btn-start" data-server="<%= server.SERVER_NAME %>">
-                                        <i class="fas fa-play"></i> Start
-                                    </button>
-                                    <button class="btn btn-danger btn-sm me-1 btn-stop" data-server="<%= server.SERVER_NAME %>">
-                                        <i class="fas fa-stop"></i> Stop
-                                    </button>
-                                    <button class="btn btn-warning btn-sm btn-restart" data-server="<%= server.SERVER_NAME %>">
-                                        <i class="fas fa-sync-alt"></i> Restart
-                                    </button>
-                                </div>
+                            </div>
+
+                            <div id="state-msg-<%= server.SERVER_NAME %>" class="<%= server.status === 'running' ? 'd-none' : '' %>">
+                                <% if (server.status === 'startup') { %>
+                                    <div class="alert alert-info mb-0">
+                                        <strong>Server is starting up...</strong>
+                                    </div>
+                                    <div class="mt-3 p-2 bg-dark text-white" style="max-height:150px; overflow-y:auto; font-size:0.85em;">
+                                        <pre id="log-<%= server.SERVER_NAME %>">Initializing...</pre>
+                                    </div>
+                                <% } else { %>
+                                    <div class="alert alert-warning mb-0 text-start">
+                                        <strong>Server is OFF.</strong><br>
+                                        <small><strong>Map:</strong> <%= server.MAP_NAME %></small><br>
+                                        <small><strong>Ports:</strong> <%= server.PORT %> / RCON: <%= server.RCON_PORT %></small><br>
+                                        <small><strong>Cluster ID:</strong> <%= server.CLUSTER_ID %></small><br>
+                                        <small><strong>Max Players:</strong> <%= server.MAX_PLAYERS %></small><br>
+                                        <small><strong>Mods:</strong> <%= server.MODS ? server.MODS.split(',').length : 0 %> mods configured</small>
+                                    </div>
+                                <% } %>
                             </div>
                         </div>
                     </div>
-                <% }) %>
-            </div>
-        </section>
-    </main>
+                </div>
+            <% }) %>
+        </div>
+    </section>
+</div>
 
-    <%- include('partials/footer', { page: "index" }) %>
+<%- include('partials/modals') %>
+<%- include('partials/footer', { page: "index" }) %>
 </body>
 </html>

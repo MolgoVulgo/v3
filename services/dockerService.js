@@ -2,16 +2,15 @@ const http = require('http');
 const os = require('os');
 const path = require('path');
 const { findServerByName } = require("../models/serverModel");
+const cache = require('../utils/cache');
 
 let dockerApiVersion = 'v1.48'; // Default fallback
+let websocketInstance = null;
 
 /*=======================================================================
  *                      DOCKER SOCKET INITIALISATION
  *======================================================================*/
 
-/**
- * Initializes Docker API version by querying /version endpoint.
- */
 async function initDockerVersion() {
     return new Promise((resolve) => {
         const options = {
@@ -29,37 +28,27 @@ async function initDockerVersion() {
                     if (json.ApiVersion) {
                         dockerApiVersion = `v${json.ApiVersion}`;
                         console.log(`🛠️ Docker API Version detected: ${dockerApiVersion}`);
-                    } else {
-                        console.warn(`⚠️ Docker API Version not found, using default: ${dockerApiVersion}`);
                     }
                     resolve();
-                } catch (err) {
-                    console.warn(`⚠️ Error parsing Docker version: ${err.message}`);
+                } catch {
                     resolve();
                 }
             });
         });
 
-        req.on('error', (err) => {
-            console.warn(`⚠️ Error contacting Docker daemon: ${err.message}`);
-            resolve();
-        });
-
+        req.on('error', () => resolve());
         req.end();
     });
+}
+
+function setWebSocketInstance(ws) {
+    websocketInstance = ws;
 }
 
 /*=======================================================================
  *                      DOCKER SOCKET HELPER
  *======================================================================*/
 
-/**
- * Sends an HTTP request to the Docker socket API.
- * @param {string} path - API endpoint path (without version prefix).
- * @param {string} method - HTTP method.
- * @param {Object|null} data - Data to send (if any).
- * @returns {Promise<Object>}
- */
 function dockerRequest(path, method = 'GET', data = null, isStream = false) {
     return new Promise((resolve, reject) => {
         const options = {
@@ -77,88 +66,189 @@ function dockerRequest(path, method = 'GET', data = null, isStream = false) {
         }
 
         const req = http.request(options, res => {
+            if (isStream) {
+                return resolve(res); // ← ✅ on retourne directement le flux brut
+            }
+
             let responseData = '';
             res.on('data', chunk => { responseData += chunk; });
             res.on('end', () => {
                 if (res.statusCode >= 200 && res.statusCode < 300) {
-                    if (isStream) {
-                        const lines = responseData.trim().split('\n');
-                        const jsonLines = lines.map(line => JSON.parse(line));
-                        resolve(jsonLines);
-                    } else {
-                        resolve(responseData ? JSON.parse(responseData) : {});
-                    }
+                    resolve(responseData ? JSON.parse(responseData) : {});
                 } else if (res.statusCode === 404) {
                     resolve(null);
                 } else {
-                    console.error(`❌ Docker API Error ${method} ${options.path}: ${res.statusCode}`);
-                    console.error(`❌ Docker API Response: ${responseData}`);
                     reject(new Error(`Docker API Error ${method} ${options.path}: ${res.statusCode}`));
                 }
             });
         });
+
         req.on('error', reject);
         if (body) req.write(body);
         req.end();
     });
 }
 
-/**
- * Ensures a unique Docker network per cluster exists, creates it if not.
- * @param {string} clusterId - The unique identifier for the cluster.
- * @returns {Promise<string>} - Returns the network name created or existing.
- */
-async function ensureNetworkExists(clusterId) {
-    const networkName = `asa-network-${clusterId}`;
+/*=======================================================================
+ *                        STREAMING STATS
+ *======================================================================*/
 
+
+async function streamContainerStats(containerId, containerName) {
     try {
-        const existingNetwork = await dockerRequest(`/networks/${networkName}`, 'GET');
-        if (existingNetwork) {
-            console.log(`🌐 Docker network '${networkName}' already exists.`);
-        } else {
-            console.log(`🌐 Docker network '${networkName}' does not exist, creating...`);
-            const networkConfig = {
-                Name: networkName,
-                Driver: "bridge",
-                Attachable: true
-                // Pas de bridge name custom → Docker gère automatiquement
-            };
-            await dockerRequest('/networks/create', 'POST', networkConfig);
-            console.log(`✅ Docker network '${networkName}' created.`);
-        }
-        return networkName;
+        const path = `/containers/${containerId}/stats?stream=true`;
+
+        console.debug(`[STREAM] Connexion directe au flux Docker stats pour ${containerName}`);
+
+        const options = {
+            socketPath: '/var/run/docker.sock',
+            path: `/${dockerApiVersion}${path}`,
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' }
+        };
+
+        const req = http.request(options, res => {
+            let buffer = '';
+
+            res.on('data', chunk => {
+                buffer += chunk.toString();
+
+                const lines = buffer.split('\n');
+                buffer = lines.pop(); // garde une ligne partielle éventuelle
+
+                lines.forEach(line => {
+                    try {
+                        const stat = JSON.parse(line);
+                        //console.debug(`[STATS] Nouvelle donnée pour ${containerName}:`, stat);
+                        const cpuPercent = calculateCPUPercentage(stat);
+                        const rawUsage = stat.memory_stats?.usage || 0;
+                        const file = stat.memory_stats?.stats?.file || 0;
+                        const memUsage = Math.max(0, rawUsage - file); // estimation réaliste sans cache
+                        const memLimit = stat.memory_stats?.limit || 1;
+
+                        // MAJ cache container
+                        cache.containersStats[containerName] = {
+                            name: containerName,
+                            CPU_USAGE: cpuPercent,
+                            MEMORY_USAGE: {
+                                used: memUsage,
+                                total: memLimit
+                            }
+                        };
+
+                        // MAJ cache host
+                        const totalMem = os.totalmem();
+                        const freeMem = os.freemem();
+                        cache.hostStats = {
+                            CPU_USAGE: cpuPercent,
+                            MEMORY_USAGE: {
+                                used: totalMem - freeMem,
+                                total: totalMem
+                            }
+                        };
+
+                        // WebSocket broadcast
+                        if (websocketInstance) {
+                            websocketInstance.clients.forEach(client => {
+                                if (client.readyState === 1) {
+                                    // Host
+                                    client.send(JSON.stringify({
+                                        type: "monitoring",
+                                        scope: "host",
+                                        target: "host",
+                                        event: "stats",
+                                        data: cache.hostStats
+                                    }));
+
+                                    // Container
+                                    client.send(JSON.stringify({
+                                        type: "monitoring",
+                                        scope: "container",
+                                        target: containerName,
+                                        event: "stats",
+                                        data: cache.containersStats[containerName]
+                                    }));
+
+                                    // Server enrichi (si pas encore fait)
+                                    const serverName = containerName.replace('ARK-ASA-', '');
+                                    const currentStatus = cache.serversStatus[serverName]?.status;
+                                    const currentCPU = cache.serversStatus[serverName]?.CPU_USAGE;
+
+                                    if (
+                                        (currentStatus === "running" || currentStatus === "startup") &&
+                                        (currentCPU === "N/A" || currentCPU === undefined)
+                                    ) {
+                                        console.debug(`[WS] Envoi enrichi monitoring/server/status pour ${serverName}`);
+                                        monitorsService.updateAndNotifyStatus(serverName, "running");
+                                    }
+                                }
+                            });
+                        }
+
+                    } catch (e) {
+                        console.warn(`[WARN] Chunk non parsable dans stats stream pour ${containerName}`);
+                    }
+                });
+            });
+
+            res.on('end', () => {
+                console.log(`[END] Stream stats terminé pour ${containerName}`);
+            });
+        });
+
+        req.on('error', (err) => {
+            console.error(`❌ Stream stats échoué pour ${containerName}:`, err.message);
+        });
+
+        req.end();
+
     } catch (err) {
-        console.error(`❌ Failed to ensure Docker network '${networkName}':`, err.message);
-        throw err;
+        console.error(`❌ Erreur dans streamContainerStats pour ${containerName}:`, err.message);
     }
 }
 
-async function ensureDockerImageExists(imageName) {
+function calculateCPUPercentage(stats) {
     try {
-        const images = await dockerRequest(`/images/json`, 'GET');
-        const imageExists = images.some(image => image.RepoTags && image.RepoTags.includes(imageName));
-
-        if (!imageExists) {
-            console.log(`📥 Pulling Docker image: ${imageName}...`);
-            
-            // Passer "isStream=true" pour traiter le stream correctement
-            await dockerRequest(`/images/create?fromImage=${encodeURIComponent(imageName)}`, 'POST', null, true);
-
-            console.log(`✅ Docker image ${imageName} pulled successfully.`);
-        } else {
-            console.log(`🐳 Docker image ${imageName} already exists locally.`);
+        const cpuDelta = stats.cpu_stats.cpu_usage.total_usage - stats.precpu_stats.cpu_usage.total_usage;
+        const systemDelta = stats.cpu_stats.system_cpu_usage - stats.precpu_stats.system_cpu_usage;
+        const cpuCount = stats.cpu_stats.online_cpus || os.cpus().length;
+        if (systemDelta > 0 && cpuDelta > 0) {
+            return (cpuDelta / systemDelta) * cpuCount * 100;
         }
-    } catch (err) {
-        console.error(`❌ Failed to ensure Docker image '${imageName}':`, err.message);
-        throw err;
+        return 0;
+    } catch {
+        return 0;
     }
 }
 
+async function startStatsStreamingForAllContainers() {
+    try {
+        const containers = await listContainers();
+
+        containers.forEach(container => {
+            const containerName = container.Names[0].replace('/', '');
+
+            if (containerName.startsWith('ARK-ASA-')) {
+                const serverName = containerName.replace('ARK-ASA-', '');
+                console.debug(`[STREAM] Démarrage du stream stats pour ${serverName}`);
+                streamContainerStats(container.Id, serverName);
+            }
+        });
+
+        console.log("🚀 streamContainerStats lancé pour tous les containers actifs.");
+    } catch (err) {
+        console.error("❌ Erreur dans startStatsStreamingForAllContainers:", err.message);
+    }
+}
 
 
 /*=======================================================================
- *                      DOCKER SERVER ACTIONS
+ *                        DOCKER COMMANDS
  *======================================================================*/
+
+async function listContainers() {
+    return dockerRequest('/containers/json', 'GET');
+}
 
 async function checkContainerExists(containerName) {
     const result = await dockerRequest(`/containers/${containerName}/json`, 'GET').catch(() => null);
@@ -168,72 +258,35 @@ async function checkContainerExists(containerName) {
 async function removeContainer(containerName) {
     const exists = await checkContainerExists(containerName);
     if (exists) {
-        console.log(`🗑️ Removing container ${containerName}`);
         await dockerRequest(`/containers/${containerName}?force=true`, 'DELETE');
     }
 }
 
-async function createServerContainer(server) {
-    try {
-        server.CLUSTER_ID = server.CLUSTER_ID || generateClusterId();
-        const containerName = `ARK-ASA-${server.SERVER_NAME}`;
-        const networkName = await ensureNetworkExists(server.CLUSTER_ID);
+async function ensureNetworkExists(clusterId) {
+    const networkName = `asa-network-${clusterId}`;
+    const existing = await dockerRequest(`/networks/${networkName}`, 'GET');
+    if (!existing) {
+        await dockerRequest('/networks/create', 'POST', {
+            Name: networkName,
+            Driver: "bridge",
+            Attachable: true
+        });
+    }
+    return networkName;
+}
 
-        await removeContainer(containerName);
-
-        const binds = [
-            path.resolve(`../server-files/${server.SERVER_NAME}`) + ':/home/gameserver/server-files:rw',
-            path.resolve(`../steam`) + ':/home/gameserver/steam:rw',
-            path.resolve(`../steamcmd`) + ':/home/gameserver/steamcmd:rw',
-            path.resolve(`../cluster-shared`) + ':/home/gameserver/cluster-shared:rw',
-            '/etc/localtime:/etc/localtime:ro'
-        ];
-
-        const config = {
-            Image: "mschnitzer/asa-linux-server:latest",
-            name: containerName,
-            Entrypoint: ["/usr/bin/start_server"],
-            Hostname: `ARK-ASA-${server.SERVER_NAME}`,
-            User: "gameserver",
-            Tty: true,
-            OpenStdin: true,
-            Env: [
-                `ASA_START_PARAMS=${server.MAP_NAME}_WP?listen?Port=${server.PORT}?RCONPort=${server.RCON_PORT}?RCONEnabled=True -UseDynamicConfig -WinLiveMaxPlayers=${server.MAX_PLAYERS} -clusterid=${server.CLUSTER_ID} -ClusterDirOverride="/home/gameserver/cluster-shared" -mods=${server.MODS}`,
-                `ENABLE_DEBUG=0`
-            ],
-            HostConfig: {
-                PortBindings: {
-                    [`${server.PORT}/udp`]: [{ HostPort: `${server.PORT}` }],
-                    [`${server.RCON_PORT}/tcp`]: [{ HostPort: `${server.RCON_PORT}` }]
-                },
-                Binds:binds,
-                NetworkMode: networkName
-            },
-            NetworkingConfig: {
-                EndpointsConfig: {
-                    [networkName]: {}
-                }
-            }
-        };
-
-        const imageName = "mschnitzer/asa-linux-server:latest";
-        await ensureDockerImageExists(imageName);
-        await setPermissions();
-        await dockerRequest(`/containers/create?name=${containerName}`, 'POST', config);
-        console.log(`✅ Container ${containerName} created.`);
-        await dockerRequest(`/containers/${containerName}/start`, 'POST');
-        console.log(`🚀 Container ${containerName} started.`);
-    } catch (err) {
-        console.log(`❌ Docker API Error:`, err.response?.data || err.message);
-        throw err;
+async function ensureDockerImageExists(imageName) {
+    const images = await dockerRequest('/images/json');
+    const found = images.some(image => image.RepoTags?.includes(imageName));
+    if (!found) {
+        await dockerRequest(`/images/create?fromImage=${encodeURIComponent(imageName)}`, 'POST', null, true);
     }
 }
 
 async function setPermissions() {
-    const containerName = "set-permissions";
     const imageName = "opensuse/leap";
+    const containerName = "set-permissions";
 
-    // Garantir la présence de l'image localement avant création
     await ensureDockerImageExists(imageName);
 
     const config = {
@@ -242,49 +295,78 @@ async function setPermissions() {
         User: "root",
         HostConfig: {
             Binds: [
-                path.resolve('../steam') + ':/steam:rw',
-                path.resolve('../steamcmd') + ':/steamcmd:rw',
-                path.resolve('../cluster-shared') + ':/cluster-shared:rw',
-                path.resolve('../server-files') + ':/server-files:rw'
+                path.resolve('./steam') + ':/steam:rw',
+                path.resolve('./steamcmd') + ':/steamcmd:rw',
+                path.resolve('./cluster-shared') + ':/cluster-shared:rw',
+                path.resolve('./server-files') + ':/server-files:rw'
             ],
             AutoRemove: true
         }
     };
 
-    try {
-        await dockerRequest(`/containers/${containerName}?force=true`, 'DELETE').catch(() => null);
-        await dockerRequest(`/containers/create?name=${containerName}`, 'POST', config);
-        console.log(`✅ Container ${containerName} créé.`);
-        await dockerRequest(`/containers/${containerName}/start`, 'POST');
-        console.log(`🔧 Permissions mises à jour avec succès par ${containerName}.`);
-        await dockerRequest(`/containers/${containerName}/wait`, 'POST');
-        console.log(`✅ Container ${containerName} terminé et supprimé automatiquement.`);
-    } catch (err) {
-        console.error(`❌ Erreur mise à jour permissions: ${err.message}`);
-        throw err;
-    }
+    await dockerRequest(`/containers/${containerName}?force=true`, 'DELETE').catch(() => null);
+    await dockerRequest(`/containers/create?name=${containerName}`, 'POST', config);
+    await dockerRequest(`/containers/${containerName}/start`, 'POST');
+    await dockerRequest(`/containers/${containerName}/wait`, 'POST');
+}
+
+async function createServerContainer(server) {
+    server.CLUSTER_ID = server.CLUSTER_ID || generateClusterId();
+    const containerName = `ARK-ASA-${server.SERVER_NAME}`;
+    const networkName = await ensureNetworkExists(server.CLUSTER_ID);
+
+    await removeContainer(containerName);
+
+    const binds = [
+        path.resolve(`./server-files/${server.SERVER_NAME}`) + ':/home/gameserver/server-files:rw',
+        path.resolve(`./steam`) + ':/home/gameserver/steam:rw',
+        path.resolve(`./steamcmd`) + ':/home/gameserver/steamcmd:rw',
+        path.resolve(`./cluster-shared`) + ':/home/gameserver/cluster-shared:rw',
+        '/etc/localtime:/etc/localtime:ro'
+    ];
+
+    const config = {
+        Image: "mschnitzer/asa-linux-server:latest",
+        name: containerName,
+        Entrypoint: ["/usr/bin/start_server"],
+        Hostname: containerName,
+        User: "gameserver",
+        Tty: true,
+        OpenStdin: true,
+        Env: [
+            `ASA_START_PARAMS=${server.MAP_NAME}_WP?listen?Port=${server.PORT}?RCONPort=${server.RCON_PORT}?RCONEnabled=True -UseDynamicConfig -WinLiveMaxPlayers=${server.MAX_PLAYERS} -clusterid=${server.CLUSTER_ID} -ClusterDirOverride="/home/gameserver/cluster-shared" -mods=${server.MODS}`,
+            `ENABLE_DEBUG=0`
+        ],
+        HostConfig: {
+            PortBindings: {
+                [`${server.PORT}/udp`]: [{ HostPort: `${server.PORT}` }],
+                [`${server.RCON_PORT}/tcp`]: [{ HostPort: `${server.RCON_PORT}` }]
+            },
+            Binds: binds,
+            NetworkMode: networkName
+        },
+        NetworkingConfig: {
+            EndpointsConfig: {
+                [networkName]: {}
+            }
+        }
+    };
+
+    await ensureDockerImageExists(config.Image);
+    await setPermissions();
+    await dockerRequest(`/containers/create?name=${containerName}`, 'POST', config);
+    await dockerRequest(`/containers/${containerName}/start`, 'POST');
 }
 
 async function executeStartServer(serverName) {
-    try {
-        const server = findServerByName(serverName);
-        console.debug(server);
-        if (!server) throw new Error(`Server ${serverName} not found`);
-        await createServerContainer(server);
-    } catch (err) {
-        console.error(`❌ Failed to start server ${serverName}:`, err.message);
-    }
+    const server = findServerByName(serverName);
+    if (!server) throw new Error(`Server ${serverName} not found`);
+    await createServerContainer(server);
 }
 
 async function executeStopServer(serverName) {
-    try {
-        const containerName = `ARK-ASA-${serverName}`;
-        console.log(`[DOCKER] Stopping server: ${containerName}`);
-        await dockerRequest(`/containers/${containerName}/stop`, 'POST');
-        console.log(`✅ Server ${containerName} stopped.`);
-    } catch (err) {
-        console.error(`❌ Failed to stop server ${serverName}:`, err.message);
-    }
+    const containerName = `ARK-ASA-${serverName}`;
+    await dockerRequest(`/containers/${containerName}/stop`, 'POST');
 }
 
 async function executeRestartServer(serverName) {
@@ -292,39 +374,14 @@ async function executeRestartServer(serverName) {
     await executeStartServer(serverName);
 }
 
-async function isServerRunning(serverName) {
-    try {
-        const containerName = `ARK-ASA-${serverName}`;
-        const containerInfo = await dockerRequest(`/containers/${containerName}/json`, 'GET');
-
-        if (!containerInfo) {
-            // Le conteneur n'existe pas → serveur off
-            return { status: "off", details: null };
-        }
-
-        const running = (containerInfo.State && containerInfo.State.Running) ? "running" : "off";
-
-        const details = {
-            status: running,
-            startedAt: containerInfo.State.StartedAt,
-            uptime: containerInfo.State.Running ? containerInfo.State.StartedAt : null,
-            containerId: containerInfo.Id,
-            image: containerInfo.Config.Image
-        };
-
-        return details;
-    } catch (err) {
-        // Cas critique (Docker down)
-        console.error(`❌ Docker error while checking status of ${serverName}:`, err.message);
-        return { status: "off", details: null };
-    }
+function streamDockerLogs(containerName) {
+    return dockerRequest(`/containers/${containerName}/logs?stdout=true&stderr=true&follow=true`, 'GET', null, true);
 }
 
-
 function generateClusterId() {
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
-        const r = (Math.random() * 16) | 0;
-        return (c === 'x' ? r : (r & 0x3) | 0x8).toString(16);
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+        const r = Math.random() * 16 | 0;
+        return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
     });
 }
 
@@ -338,6 +395,11 @@ module.exports = {
     executeRestartServer,
     checkContainerExists,
     removeContainer,
-    isServerRunning,
-    initDockerVersion // À appeler au démarrage
+    initDockerVersion,
+    setWebSocketInstance,
+    dockerRequest,
+    streamDockerLogs,
+    listContainers,
+    streamContainerStats,
+    startStatsStreamingForAllContainers
 };

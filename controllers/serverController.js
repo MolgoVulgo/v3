@@ -9,28 +9,15 @@ dotenv.config();
 const configPath = path.join(__dirname, '../config/config.json');
 const availableMaps = process.env.AVAILABLE_MAPS.split(',');
 
-let intervalId = null;
-
 /*=======================================================================
  *                         CONFIGURATION FUNCTIONS
  *======================================================================*/
 
-/**
- * Retrieves the server configuration by its name.
- * @param {string} serverName - Name of the server.
- * @returns {Object|null} Server config object or null if not found.
- */
 function getServerConfig(serverName) {
     const config = JSON.parse(fs.readFileSync(configPath, "utf8"));
     return config.SERVERS.find(s => s.SERVER_NAME === serverName) || null;
 }
 
-/**
- * Retrieves the list of all servers.
- * @param {Object} req - Express request object.
- * @param {Object} res - Express response object.
- * @returns {void} Sends a JSON response containing the list of servers.
- */
 function getServers(req, res) {
     try {
         const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
@@ -41,16 +28,8 @@ function getServers(req, res) {
     }
 }
 
-/**
- * Retrieves a specific server by its name from the configuration file.
- * @param {Object} req - Express request object.
- * @param {Object} res - Express response object.
- * @returns {void} Sends a JSON response with the server data or an error message.
- */
 function getServerByName(req, res) {
     try {
-        
-        console.debug(req.params);
         const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
         const server = config.SERVERS.find(s => s.SERVER_NAME === req.params.serverName);
 
@@ -65,12 +44,6 @@ function getServerByName(req, res) {
     }
 }
 
-/**
- * Adds a new server with validation.
- * @param {Object} req - Express request object.
- * @param {Object} res - Express response object.
- * @returns {void} Sends a JSON response with the added server or an error message.
- */
 function addServer(req, res) {
     try {
         const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
@@ -84,7 +57,6 @@ function addServer(req, res) {
             newServer.MAP_NAME += "_WP";
         }
 
-        // Dynamic port generation
         const usedPorts = config.SERVERS.map(s => s.PORT);
         const usedRconPorts = config.SERVERS.map(s => s.RCON_PORT);
 
@@ -108,12 +80,6 @@ function addServer(req, res) {
     }
 }
 
-/**
- * Updates an existing server configuration.
- * @param {Object} req - Express request object.
- * @param {Object} res - Express response object.
- * @returns {void} Sends a JSON response with the updated server or an error message.
- */
 function updateServer(req, res) {
     try {
         const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
@@ -133,12 +99,6 @@ function updateServer(req, res) {
     }
 }
 
-/**
- * Deletes a server configuration.
- * @param {Object} req - Express request object.
- * @param {Object} res - Express response object.
- * @returns {void} Sends a JSON response confirming deletion or error.
- */
 function deleteServer(req, res) {
     try {
         const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
@@ -158,12 +118,6 @@ function deleteServer(req, res) {
     }
 }
 
-/**
- * Retrieves the list of available maps.
- * @param {Object} req - Express request object.
- * @param {Object} res - Express response object.
- * @returns {void} Sends a JSON response containing map names.
- */
 function getAvailableMaps(req, res) {
     res.json(availableMaps);
 }
@@ -172,12 +126,6 @@ function getAvailableMaps(req, res) {
  *                           DOCKER & MONITOR FUNCTIONS
  *======================================================================*/
 
-/**
- * Starts a specific Ark ASA server and triggers monitoring.
- * @param {Object} req - Express request object.
- * @param {Object} res - Express response object.
- * @returns {void} Sends a JSON response confirming the start action.
- */
 async function startServer(req, res) {
     try {
         const config = JSON.parse(fs.readFileSync(configPath, "utf8"));
@@ -187,42 +135,52 @@ async function startServer(req, res) {
             return res.status(404).json({ error: "Server not found - startServer" });
         }
 
-        console.log(server.SERVER_NAME);
+        console.log(`[START] Lancement du serveur ${server.SERVER_NAME}`);
 
-        // Start Docker server
-        dockerService.executeStartServer(server.SERVER_NAME);
+        await dockerService.executeStartServer(server.SERVER_NAME);
 
-        // Start Monitoring
+        console.debug(`[startup] Lancement du monitor pour ${server.SERVER_NAME}`);
+        monitorsService.updateAndNotifyStatus(server.SERVER_NAME, "startup");
+        console.debug(`[startup] Monitor démarré pour ${server.SERVER_NAME}`);
         monitorsService.monitorServerState(server.SERVER_NAME);
+
+        // Lancer streamContainerStats dynamiquement
+        const containers = await dockerService.listContainers ();
+        const targetContainer = containers.find(c =>
+            c.Names.some(name => name === `/ARK-ASA-${server.SERVER_NAME}`)
+        );
+
+        if (targetContainer) {
+            console.debug(`[STREAM] Lancement du stream Docker stats pour ${server.SERVER_NAME}`);
+            dockerService.streamContainerStats(targetContainer.Id, server.SERVER_NAME);
+            // On ne déclenche plus updateAndNotifyStatus ici : il sera appelé automatiquement par streamContainerStats
+        } else {
+            console.warn(`[WARN] Container non trouvé pour ${server.SERVER_NAME} après démarrage.`);
+        }
 
         res.json({ message: `Server ${server.SERVER_NAME} is starting.` });
     } catch (error) {
-        console.error("Error starting server:", error);
+        console.error("❌ Error starting server:", error);
         res.status(500).json({ error: "Failed to start server" });
     }
 }
 
-/**
- * Stops an Ark ASA server.
- * @param {Object} req - Express request object.
- * @param {Object} res - Express response object.
- * @returns {void} Sends a JSON response confirming the stop action.
- */
 async function stopServer(req, res) {
+    const serverName = req.params.serverName;
+
     try {
-        await dockerService.executeStopServer(req.params.serverName);
-        res.status(200).json({ message: `Server ${req.params.serverName} stopped.` });
+        await dockerService.executeStopServer(serverName);
+
+        monitorsService.updateAndNotifyStatus(serverName, "off");
+
+        res.status(200).json({ message: `Server ${serverName} stopped.` });
+
     } catch (error) {
+        console.error("❌ Error stopping server:", error.message);
         res.status(500).json({ error: error.message });
     }
 }
 
-/**
- * Restarts an Ark ASA server and triggers monitoring.
- * @param {Object} req - Express request object.
- * @param {Object} res - Express response object.
- * @returns {void} Sends a JSON response confirming restart action.
- */
 async function restartServer(req, res) {
     try {
         const serverName = req.params.serverName;
@@ -232,86 +190,40 @@ async function restartServer(req, res) {
             return res.status(404).json({ error: "Server not found - restartServer" });
         }
 
-        await dockerService.executeRestartServer(server);
+        await dockerService.executeRestartServer(serverName);
 
-        // Start monitoring after Docker restart
-        monitorsService.monitorServerState(serverName);
+        monitorsService.updateAndNotifyStatus(serverName, "startup");
+
+        setTimeout(() => {
+            monitorsService.monitorServerState(serverName);
+        }, 3000);
 
         res.json({ message: `Server ${serverName} is restarting...` });
     } catch (error) {
-        console.error(`Error restarting server ${req.params.serverName}:`, error.message);
+        console.error(`❌ Error restarting server ${req.params.serverName}:`, error.message);
         res.status(500).json({ error: "Failed to restart server" });
     }
 }
 
-/**
- * Retrieves the status (ON/OFF) of a specific server.
- * @param {Object} req - Express request object.
- * @param {Object} res - Express response object.
- * @returns {void} Sends a JSON response with server status.
- */
-async function getStatus(req, res) {
-    const { serverName } = req.params;
-    try {
-        const statusInfo = await dockerService.isServerRunning(serverName);
-
-        res.json({
-            server: serverName,
-            status: statusInfo.status,
-            details: statusInfo.details
-        });
-
-    } catch (err) {
-        console.error(`❌ Error fetching status for ${serverName}:`, err.message);
-        res.status(500).json({ error: "Failed to get server status." });
-    }
-}
-
-/**
- * Starts periodic checking of servers and broadcasts their status via WebSocket.
- * @param {Object} wss - WebSocket server instance.
- * @returns {void}
- */
-function startPeriodicCheck(wss) {
-    if (intervalId) clearInterval(intervalId);
-
-    intervalId = setInterval(async () => {
-        const serversStatus = await fetchAllServersStatus();
-        broadcastServerUpdate(wss, serversStatus);
-    }, 10000); // Interval in ms (10 sec)
-}
-
-
-/**
- * Returns the status and stats of all servers + host stats.
- * @param {Object} req - Express request object.
- * @param {Object} res - Express response object.
-*/
 async function getAllServersStatus(req, res) {
     try {
-        //const result = await fetchAllServersStatus();
-        console.debug(result);
+        const result = await fetchAllServersStatus();
         res.json(result);
     } catch (err) {
-        console.error("❌ Error in /api/servers/status/all:", err.message);
+        console.error("❌ Error in /api/server/status/all:", err.message);
         res.status(500).json({
             message: "Internal server error while fetching server stats."
         });
     }
 }
 
-/**
- * Fetches the status and statistics of all servers, including those that are stopped,
- * and merges them with any available runtime stats from the cache.
- *
- * @returns {Promise<Object>} - Returns an object containing:
- *                              - servers: An object with each server's status and stats.
- *                              - hostStats: Host machine stats from cache.
- * @throws {Error} - Throws error if reading the configuration file fails.
- */
 async function fetchAllServersStatus() {
+    console.debug("🔄 Refreshing all servers status...");
+    //console.debug("cache.serversStatus:", cache.serversStatus);
+    //console.debug("cache.containersStats:", cache.containersStats);
+    //console.debug("cache.hostStats:", cache.hostStats); 
+
     try {
-        // Read the full list of servers from config
         const configData = JSON.parse(fs.readFileSync(configPath, 'utf8'));
         const allServers = configData.SERVERS;
         const serversWithStats = {};
@@ -319,17 +231,12 @@ async function fetchAllServersStatus() {
         allServers.forEach(server => {
             const serverName = server.SERVER_NAME;
 
-            // Retrieve server status from cache (default to running: false if not found)
-            const serverStatus = cache.serversStatus[serverName] || { running: false };
+            const dynamic = cache.serversStatus[serverName] || { status: 'off', detectedState: 'off' };
+            const containerStat = cache.containersStats[serverName];
 
-            // Retrieve container stats if available
-            const containerStat = Object.values(cache.containersStats).find(stat =>
-                stat.name.includes(serverName)
-            );
-
-            // Merge all data
             serversWithStats[serverName] = {
-                ...serverStatus,
+                ...server,
+                ...dynamic,
                 CPU_USAGE: containerStat ? containerStat.CPU_USAGE : "N/A",
                 MEMORY_USAGE: containerStat ? containerStat.MEMORY_USAGE : "N/A"
             };
@@ -341,20 +248,41 @@ async function fetchAllServersStatus() {
         };
     } catch (error) {
         console.error("❌ Error in fetchAllServersStatus:", error.message);
-        throw error; // Propagate error to be caught by caller
+        throw error;
     }
 }
 
-/**
- * Broadcasts server status updates via WebSocket.
- * @param {Object} wss - WebSocket server instance.
- * @param {Array} serversStatus - List of server statuses.
- * @returns {void}
- */
 function broadcastServerUpdate(wss, serversStatus) {
+    Object.keys(serversStatus.servers).forEach(serverName => {
+        const server = serversStatus.servers[serverName];
+
+        wss.clients.forEach(client => {
+            if (client.readyState === 1) {
+                client.send(JSON.stringify({
+                    type: "monitoring",
+                    scope: "server",
+                    target: serverName,
+                    event: "status",
+                    data: {
+                        status: server.status,
+                        CPU_USAGE: server.CPU_USAGE,
+                        MEMORY_USAGE: server.MEMORY_USAGE,
+                        detectedState: server.detectedState
+                    }
+                }));
+            }
+        });
+    });
+
     wss.clients.forEach(client => {
         if (client.readyState === 1) {
-            client.send(JSON.stringify({ event: 'server:update', data: serversStatus }));
+            client.send(JSON.stringify({
+                type: "monitoring",
+                scope: "host",
+                target: "host",
+                event: "stats",
+                data: serversStatus.hostStats
+            }));
         }
     });
 }
@@ -369,12 +297,11 @@ module.exports = {
     addServer,
     updateServer,
     deleteServer,
-    startPeriodicCheck,
-    getStatus,
     getAllServersStatus,
     startServer,
     stopServer,
     restartServer,
     getAvailableMaps,
-    fetchAllServersStatus
+    fetchAllServersStatus,
+    broadcastServerUpdate
 };

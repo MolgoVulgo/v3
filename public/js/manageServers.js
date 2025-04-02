@@ -9,7 +9,7 @@
  */
 async function loadServers() {
     try {
-        const response = await fetch("/api/servers");
+        const response = await fetch("/api/server");
         const servers = await response.json();
         const currentPage = document.body.dataset.page;
 
@@ -124,7 +124,7 @@ async function deleteServer(serverName) {
     const confirmDelete = confirm(`Are you sure you want to delete the server: ${serverName}?`);
     if (!confirmDelete) return;
 
-    await fetch(`/api/servers/${serverName}`, { method: "DELETE" });
+    await fetch(`/api/server/${serverName}`, { method: "DELETE" });
     loadServers();
 }
 
@@ -135,7 +135,7 @@ async function deleteServer(serverName) {
  * @returns {Promise<void>}
  */
 async function editServer(serverName) {
-    const response = await fetch(`/api/servers/${serverName}`);
+    const response = await fetch(`/api/server/${serverName}`);
     const server = await response.json();
 
     document.getElementById("server-name").value = server.SERVER_NAME;
