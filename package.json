@@ -5,7 +5,7 @@
     "main": "index.js",
     "scripts": {
         "start": "node index.js",
-        "dev": "nodemon index.js --ignore 'server-files/'",
+        "dev": "nodemon",
         "test": "jest",
         "setup": "node setup.js",
         "postinstall": "node setup.js"
