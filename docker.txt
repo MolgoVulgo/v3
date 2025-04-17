@@ -1,0 +1,309 @@
+Redirecting stderr to '/home/gameserver/Steam/logs/stderr.txt'
+Logging directory: '/home/gameserver/Steam/logs'
+[  0%] Checking for available updates...
+[----] Verifying installation...
+UpdateUI: skip show logo
+Steam Console Client (c) Valve Corporation - version 1743712175
+-- type 'quit' to exit --
+Loading Steam API...[0mOK
+[0mIPC function call IClientAppManager::ForceInstallDirOverride took too long: 1416 msec
+
+Connecting anonymously to Steam Public...[0mOK
+[0mWaiting for client config...[0mOK
+[0mWaiting for user info...[0mOK
+[0mIPC function call IClientAppManager::InstallApp took too long: 80 msec
+ Update state (0x1) running, progress: 0.00 (0 / 0)
+[0m Update state (0x1) running, progress: 0.00 (0 / 0)
+[0mIPC function call IClientAppManager::GetUpdateInfo took too long: 272 msec
+ Update state (0x1) running, progress: 0.00 (0 / 0)
+[0m Update state (0x61) downloading, progress: 0.24 (78382436 / 32274748680)
+[0m Update state (0x61) downloading, progress: 0.84 (272438452 / 32274748680)
+[0m Update state (0x61) downloading, progress: 3.75 (1210010332 / 32274748680)
+[0m Update state (0x61) downloading, progress: 6.15 (1984790861 / 32274748680)
+[0m Update state (0x61) downloading, progress: 6.97 (2250313444 / 32274748680)
+[0m Update state (0x61) downloading, progress: 7.69 (2481000164 / 32274748680)
+[0m Update state (0x61) downloading, progress: 8.39 (2707492580 / 32274748680)
+[0m Update state (0x61) downloading, progress: 9.05 (2919304932 / 32274748680)
+[0m Update state (0x61) downloading, progress: 9.80 (3163822652 / 32274748680)
+[0m Update state (0x61) downloading, progress: 10.51 (3392412220 / 32274748680)
+[0m Update state (0x61) downloading, progress: 11.25 (3629320012 / 32274748680)
+[0m Update state (0x61) downloading, progress: 11.97 (3862581832 / 32274748680)
+[0m Update state (0x61) downloading, progress: 12.59 (4062859848 / 32274748680)
+[0mIPC function call IClientAppManager::GetUpdateInfo took too long: 50 msec
+ Update state (0x61) downloading, progress: 13.27 (4282012232 / 32274748680)
+[0m Update state (0x61) downloading, progress: 13.47 (4347023944 / 32274748680)
+[0m Update state (0x61) downloading, progress: 14.71 (4749191768 / 32274748680)
+[0m Update state (0x61) downloading, progress: 15.32 (4944226904 / 32274748680)
+[0m Update state (0x61) downloading, progress: 16.21 (5230488152 / 32274748680)
+[0m Update state (0x61) downloading, progress: 16.85 (5438032280 / 32274748680)
+[0m Update state (0x61) downloading, progress: 17.41 (5618138320 / 32274748680)
+[0m Update state (0x61) downloading, progress: 18.13 (5852163696 / 32274748680)
+[0m Update state (0x61) downloading, progress: 18.46 (5957021296 / 32274748680)
+[0m Update state (0x61) downloading, progress: 19.27 (6218128080 / 32274748680)
+[0m Update state (0x61) downloading, progress: 19.51 (6296771280 / 32274748680)
+[0m Update state (0x61) downloading, progress: 19.58 (6320888528 / 32274748680)
+[0m Update state (0x61) downloading, progress: 19.62 (6333471440 / 32274748680)
+[0m Update state (0x61) downloading, progress: 20.05 (6469786320 / 32274748680)
+[0m Update state (0x61) downloading, progress: 21.24 (6855805688 / 32274748680)
+[0m Update state (0x61) downloading, progress: 21.84 (7049574784 / 32274748680)
+[0m Update state (0x61) downloading, progress: 22.31 (7199974988 / 32274748680)
+[0m Update state (0x61) downloading, progress: 22.95 (7407910544 / 32274748680)
+[0m Update state (0x61) downloading, progress: 23.22 (7492845200 / 32274748680)
+[0m Update state (0x61) downloading, progress: 23.35 (7536885392 / 32274748680)
+[0m Update state (0x61) downloading, progress: 23.40 (7553662608 / 32274748680)
+[0m Update state (0x61) downloading, progress: 23.44 (7566245520 / 32274748680)
+[0m Update state (0x61) downloading, progress: 23.47 (7574634128 / 32274748680)
+[0m Update state (0x61) downloading, progress: 23.49 (7580925584 / 32274748680)
+[0m Update state (0x61) downloading, progress: 23.77 (7671103120 / 32274748680)
+[0m Update state (0x61) downloading, progress: 25.16 (8119629796 / 32274748680)
+[0m Update state (0x61) downloading, progress: 25.82 (8334587876 / 32274748680)
+[0m Update state (0x61) downloading, progress: 26.56 (8573743964 / 32274748680)
+[0m Update state (0x61) downloading, progress: 27.39 (8841130844 / 32274748680)
+[0m Update state (0x61) downloading, progress: 28.05 (9053991772 / 32274748680)
+[0m Update state (0x61) downloading, progress: 28.49 (9195549532 / 32274748680)
+[0m Update state (0x61) downloading, progress: 28.64 (9244189788 / 32274748680)
+[0m Update state (0x61) downloading, progress: 28.70 (9263064156 / 32274748680)
+[0m Update state (0x61) downloading, progress: 28.75 (9277744220 / 32274748680)
+[0m Update state (0x61) downloading, progress: 28.77 (9284035676 / 32274748680)
+[0m Update state (0x61) downloading, progress: 28.83 (9305007196 / 32274748680)
+[0m Update state (0x61) downloading, progress: 30.10 (9713833416 / 32274748680)
+[0m Update state (0x61) downloading, progress: 30.84 (9952073024 / 32274748680)
+[0m Update state (0x61) downloading, progress: 31.57 (10189571248 / 32274748680)
+[0m Update state (0x61) downloading, progress: 32.30 (10423403696 / 32274748680)
+[0m Update state (0x61) downloading, progress: 32.87 (10610050224 / 32274748680)
+[0m Update state (0x61) downloading, progress: 33.05 (10666673328 / 32274748680)
+[0m Update state (0x61) downloading, progress: 33.13 (10692887728 / 32274748680)
+[0m Update state (0x61) downloading, progress: 33.18 (10707567792 / 32274748680)
+[0m Update state (0x61) downloading, progress: 33.21 (10718053552 / 32274748680)
+[0m Update state (0x61) downloading, progress: 33.24 (10727490736 / 32274748680)
+[0m Update state (0x61) downloading, progress: 33.32 (10752656560 / 32274748680)
+[0m Update state (0x61) downloading, progress: 34.43 (11111159356 / 32274748680)
+[0m Update state (0x61) downloading, progress: 35.38 (11420138388 / 32274748680)
+[0m Update state (0x61) downloading, progress: 36.10 (11650207048 / 32274748680)
+[0m Update state (0x61) downloading, progress: 36.19 (11681664328 / 32274748680)
+[0m Update state (0x61) downloading, progress: 37.39 (12066491720 / 32274748680)
+[0m Update state (0x61) downloading, progress: 37.56 (12121237551 / 32274748680)
+[0m Update state (0x61) downloading, progress: 37.63 (12145354799 / 32274748680)
+[0m Update state (0x61) downloading, progress: 37.67 (12158986287 / 32274748680)
+[0m Update state (0x61) downloading, progress: 37.71 (12170994183 / 32274748680)
+[0m Update state (0x61) downloading, progress: 37.74 (12179225095 / 32274748680)
+[0m Update state (0x61) downloading, progress: 37.80 (12200196615 / 32274748680)
+[0m Update state (0x61) downloading, progress: 39.06 (12607973895 / 32274748680)
+[0m Update state (0x61) downloading, progress: 39.87 (12867545607 / 32274748680)
+[0m Update state (0x61) downloading, progress: 40.62 (13110555247 / 32274748680)
+[0m Update state (0x61) downloading, progress: 41.12 (13269938783 / 32274748680)
+[0m Update state (0x61) downloading, progress: 41.85 (13507530647 / 32274748680)
+[0m Update state (0x61) downloading, progress: 42.84 (13826836343 / 32274748680)
+[0m Update state (0x61) downloading, progress: 43.00 (13879265175 / 32274748680)
+[0m Update state (0x61) downloading, progress: 43.07 (13900236695 / 32274748680)
+[0m Update state (0x61) downloading, progress: 43.11 (13913868183 / 32274748680)
+[0m Update state (0x61) downloading, progress: 43.15 (13927499671 / 32274748680)
+[0m Update state (0x61) downloading, progress: 43.20 (13943228311 / 32274748680)
+[0m Update state (0x61) downloading, progress: 43.79 (14134436903 / 32274748680)
+[0m Update state (0x61) downloading, progress: 44.65 (14409401067 / 32274748680)
+[0m Update state (0x61) downloading, progress: 45.47 (14673945323 / 32274748680)
+[0m Update state (0x61) downloading, progress: 45.93 (14823891691 / 32274748680)
+[0m Update state (0x61) downloading, progress: 46.08 (14872321523 / 32274748680)
+[0m Update state (0x61) downloading, progress: 46.13 (14889847923 / 32274748680)
+[0m Update state (0x61) downloading, progress: 46.19 (14907749491 / 32274748680)
+[0m Update state (0x61) downloading, progress: 46.23 (14921380979 / 32274748680)
+[0m Update state (0x61) downloading, progress: 46.26 (14929769587 / 32274748680)
+[0m Update state (0x61) downloading, progress: 46.29 (14939475059 / 32274748680)
+[0m Update state (0x61) downloading, progress: 46.51 (15009743987 / 32274748680)
+[0m Update state (0x61) downloading, progress: 47.87 (15451135091 / 32274748680)
+[0m Update state (0x61) downloading, progress: 48.59 (15681282043 / 32274748680)
+[0m Update state (0x61) downloading, progress: 49.39 (15941328891 / 32274748680)
+[0m Update state (0x61) downloading, progress: 50.15 (16185647099 / 32274748680)
+[0m Update state (0x61) downloading, progress: 50.57 (16320913403 / 32274748680)
+[0m Update state (0x61) downloading, progress: 50.69 (16360759291 / 32274748680)
+[0m Update state (0x61) downloading, progress: 50.75 (16378585083 / 32274748680)
+[0m Update state (0x61) downloading, progress: 50.77 (16386973691 / 32274748680)
+[0m Update state (0x61) downloading, progress: 50.79 (16392216571 / 32274748680)
+[0m Update state (0x61) downloading, progress: 50.80 (16396410875 / 32274748680)
+[0m Update state (0x61) downloading, progress: 50.81 (16398508027 / 32274748680)
+[0m Update state (0x61) downloading, progress: 50.82 (16402702331 / 32274748680)
+[0m Update state (0x61) downloading, progress: 50.83 (16404799483 / 32274748680)
+[0m Update state (0x61) downloading, progress: 50.84 (16408993787 / 32274748680)
+[0m Update state (0x61) downloading, progress: 50.85 (16413188091 / 32274748680)
+[0m Update state (0x61) downloading, progress: 50.86 (16415285243 / 32274748680)
+[0m Update state (0x61) downloading, progress: 50.87 (16418430971 / 32274748680)
+[0m Update state (0x61) downloading, progress: 50.89 (16423673851 / 32274748680)
+[0m Update state (0x61) downloading, progress: 50.89 (16425771003 / 32274748680)
+[0m Update state (0x61) downloading, progress: 50.91 (16429965307 / 32274748680)
+[0m Update state (0x61) downloading, progress: 50.92 (16433111035 / 32274748680)
+[0m Update state (0x61) downloading, progress: 50.92 (16435208187 / 32274748680)
+[0m Update state (0x61) downloading, progress: 50.95 (16443596795 / 32274748680)
+[0m Update state (0x61) downloading, progress: 51.97 (16772103115 / 32274748680)
+[0m Update state (0x61) downloading, progress: 52.69 (17006984139 / 32274748680)
+[0m Update state (0x61) downloading, progress: 53.39 (17231172611 / 32274748680)
+[0mIPC function call IClientAppManager::GetUpdateInfo took too long: 43 msec
+ Update state (0x61) downloading, progress: 54.14 (17472345091 / 32274748680)
+[0m Update state (0x61) downloading, progress: 54.88 (17713517571 / 32274748680)
+[0m Update state (0x61) downloading, progress: 55.62 (17949610743 / 32274748680)
+[0m Update state (0x61) downloading, progress: 55.81 (18012741383 / 32274748680)
+[0m Update state (0x61) downloading, progress: 55.90 (18043150087 / 32274748680)
+[0m Update state (0x61) downloading, progress: 55.96 (18062024455 / 32274748680)
+[0m Update state (0x61) downloading, progress: 56.01 (18076704519 / 32274748680)
+[0m Update state (0x61) downloading, progress: 56.04 (18087190279 / 32274748680)
+[0m Update state (0x61) downloading, progress: 56.28 (18165421503 / 32274748680)
+[0m Update state (0x61) downloading, progress: 57.18 (18453779903 / 32274748680)
+[0m Update state (0x61) downloading, progress: 57.87 (18678358963 / 32274748680)
+[0m Update state (0x61) downloading, progress: 58.44 (18859762611 / 32274748680)
+[0m Update state (0x61) downloading, progress: 58.96 (19029631923 / 32274748680)
+[0m Update state (0x61) downloading, progress: 59.14 (19087303603 / 32274748680)
+[0m Update state (0x61) downloading, progress: 59.21 (19111420851 / 32274748680)
+[0m Update state (0x61) downloading, progress: 59.27 (19128198067 / 32274748680)
+[0m Update state (0x61) downloading, progress: 59.31 (19140780979 / 32274748680)
+[0m Update state (0x61) downloading, progress: 59.33 (19150218163 / 32274748680)
+[0m Update state (0x61) downloading, progress: 59.40 (19170141107 / 32274748680)
+[0m Update state (0x61) downloading, progress: 60.63 (19567780635 / 32274748680)
+[0m Update state (0x61) downloading, progress: 61.46 (19835733935 / 32274748680)
+[0m Update state (0x61) downloading, progress: 62.37 (20128765871 / 32274748680)
+[0m Update state (0x61) downloading, progress: 63.32 (20435361711 / 32274748680)
+[0m Update state (0x61) downloading, progress: 63.59 (20524645143 / 32274748680)
+[0m Update state (0x61) downloading, progress: 63.85 (20606434071 / 32274748680)
+[0m Update state (0x61) downloading, progress: 63.93 (20634379031 / 32274748680)
+[0m Update state (0x61) downloading, progress: 63.99 (20652571415 / 32274748680)
+[0m Update state (0x61) downloading, progress: 64.02 (20663180087 / 32274748680)
+[0m Update state (0x61) downloading, progress: 64.07 (20679467831 / 32274748680)
+[0m Update state (0x61) downloading, progress: 64.14 (20701383591 / 32274748680)
+[0m Update state (0x61) downloading, progress: 65.46 (21125664263 / 32274748680)
+[0m Update state (0x61) downloading, progress: 66.20 (21367137671 / 32274748680)
+[0m Update state (0x61) downloading, progress: 66.99 (21621927191 / 32274748680)
+[0mIPC function call IClientAppManager::GetUpdateInfo took too long: 41 msec
+ Update state (0x61) downloading, progress: 67.80 (21881113975 / 32274748680)
+[0m Update state (0x61) downloading, progress: 68.64 (22154428071 / 32274748680)
+[0m Update state (0x61) downloading, progress: 68.90 (22237609495 / 32274748680)
+[0m Update state (0x61) downloading, progress: 68.97 (22259000855 / 32274748680)
+[0m Update state (0x61) downloading, progress: 69.04 (22283970071 / 32274748680)
+[0m Update state (0x61) downloading, progress: 69.09 (22299256343 / 32274748680)
+[0m Update state (0x61) downloading, progress: 69.13 (22310790679 / 32274748680)
+[0m Update state (0x61) downloading, progress: 69.18 (22327567895 / 32274748680)
+[0m Update state (0x61) downloading, progress: 69.61 (22467831191 / 32274748680)
+[0m Update state (0x61) downloading, progress: 70.68 (22811612391 / 32274748680)
+[0m Update state (0x61) downloading, progress: 71.67 (23130497407 / 32274748680)
+[0m Update state (0x61) downloading, progress: 72.23 (23313429375 / 32274748680)
+[0m Update state (0x61) downloading, progress: 72.45 (23382635391 / 32274748680)
+[0m Update state (0x61) downloading, progress: 72.55 (23416189823 / 32274748680)
+[0m Update state (0x61) downloading, progress: 72.60 (23430869887 / 32274748680)
+[0m Update state (0x61) downloading, progress: 72.64 (23445549935 / 32274748680)
+[0m Update state (0x61) downloading, progress: 72.67 (23454987119 / 32274748680)
+[0m Update state (0x61) downloading, progress: 72.70 (23464424303 / 32274748680)
+[0m Update state (0x61) downloading, progress: 72.78 (23488541551 / 32274748680)
+[0m Update state (0x61) downloading, progress: 73.93 (23859729535 / 32274748680)
+[0m Update state (0x61) downloading, progress: 74.85 (24159213743 / 32274748680)
+[0m Update state (0x61) downloading, progress: 75.64 (24414214632 / 32274748680)
+[0m Update state (0x61) downloading, progress: 76.36 (24644025308 / 32274748680)
+[0m Update state (0x61) downloading, progress: 76.94 (24831720412 / 32274748680)
+[0m Update state (0x61) downloading, progress: 77.15 (24899877852 / 32274748680)
+[0m Update state (0x61) downloading, progress: 77.27 (24937626588 / 32274748680)
+[0m Update state (0x61) downloading, progress: 77.32 (24953355228 / 32274748680)
+[0m Update state (0x61) downloading, progress: 77.35 (24965144456 / 32274748680)
+[0m Update state (0x61) downloading, progress: 77.37 (24972484488 / 32274748680)
+[0m Update state (0x61) downloading, progress: 77.42 (24988213128 / 32274748680)
+[0m Update state (0x61) downloading, progress: 78.60 (25367623024 / 32274748680)
+[0m Update state (0x61) downloading, progress: 79.30 (25592371456 / 32274748680)
+[0m Update state (0x61) downloading, progress: 80.08 (25844170976 / 32274748680)
+[0m Update state (0x61) downloading, progress: 80.88 (26102665440 / 32274748680)
+[0m Update state (0x61) downloading, progress: 81.63 (26346096864 / 32274748680)
+[0m Update state (0x61) downloading, progress: 82.31 (26565309724 / 32274748680)
+[0m Update state (0x61) downloading, progress: 82.44 (26606204188 / 32274748680)
+[0m Update state (0x61) downloading, progress: 82.51 (26630795108 / 32274748680)
+[0m Update state (0x61) downloading, progress: 82.56 (26645475172 / 32274748680)
+[0m Update state (0x61) downloading, progress: 82.59 (26656175972 / 32274748680)
+[0m Update state (0x61) downloading, progress: 82.61 (26663028580 / 32274748680)
+[0m Update state (0x61) downloading, progress: 82.86 (26741581668 / 32274748680)
+[0m Update state (0x61) downloading, progress: 83.44 (26929276772 / 32274748680)
+[0m Update state (0x61) downloading, progress: 83.51 (26952345444 / 32274748680)
+[0m Update state (0x61) downloading, progress: 83.52 (26955491172 / 32274748680)
+[0m Update state (0x61) downloading, progress: 83.59 (26978469732 / 32274748680)
+[0m Update state (0x61) downloading, progress: 83.63 (26992818020 / 32274748680)
+[0m Update state (0x61) downloading, progress: 83.84 (27057862500 / 32274748680)
+[0m Update state (0x61) downloading, progress: 83.88 (27072542532 / 32274748680)
+[0m Update state (0x61) downloading, progress: 83.98 (27103261868 / 32274748680)
+[0m Update state (0x61) downloading, progress: 84.05 (27127379116 / 32274748680)
+[0m Update state (0x61) downloading, progress: 85.22 (27502932892 / 32274748680)
+[0mIPC function call IClientAppManager::GetUpdateInfo took too long: 45 msec
+ Update state (0x61) downloading, progress: 86.10 (27787171704 / 32274748680)
+[0m Update state (0x61) downloading, progress: 86.90 (28045724548 / 32274748680)
+[0m Update state (0x61) downloading, progress: 87.66 (28292746116 / 32274748680)
+[0m Update state (0x61) downloading, progress: 88.44 (28543087204 / 32274748680)
+[0m Update state (0x61) downloading, progress: 89.22 (28794146404 / 32274748680)
+[0m Update state (0x61) downloading, progress: 89.94 (29028672860 / 32274748680)
+[0m Update state (0x61) downloading, progress: 90.22 (29118820228 / 32274748680)
+[0m Update state (0x61) downloading, progress: 90.46 (29194317700 / 32274748680)
+[0m Update state (0x61) downloading, progress: 90.56 (29226823556 / 32274748680)
+[0m Update state (0x61) downloading, progress: 90.59 (29237309316 / 32274748680)
+[0m Update state (0x61) downloading, progress: 90.62 (29248843652 / 32274748680)
+[0m Update state (0x61) downloading, progress: 91.45 (29516797160 / 32274748680)
+[0m Update state (0x61) downloading, progress: 91.88 (29654160616 / 32274748680)
+[0m Update state (0x61) downloading, progress: 92.48 (29849195752 / 32274748680)
+[0m Update state (0x61) downloading, progress: 92.87 (29972296936 / 32274748680)
+[0m Update state (0x61) downloading, progress: 93.41 (30147265768 / 32274748680)
+[0m Update state (0x61) downloading, progress: 93.56 (30197597432 / 32274748680)
+[0m Update state (0x61) downloading, progress: 93.66 (30229595624 / 32274748680)
+[0m Update state (0x61) downloading, progress: 93.74 (30255844840 / 32274748680)
+[0m Update state (0x61) downloading, progress: 93.89 (30304067048 / 32274748680)
+[0m Update state (0x61) downloading, progress: 94.00 (30338670056 / 32274748680)
+[0m Update state (0x61) downloading, progress: 94.45 (30484337688 / 32274748680)
+[0m Update state (0x61) downloading, progress: 95.65 (30871868220 / 32274748680)
+[0m Update state (0x61) downloading, progress: 96.22 (31054666652 / 32274748680)
+[0m Update state (0x61) downloading, progress: 97.29 (31400941272 / 32274748680)
+[0m Update state (0x61) downloading, progress: 97.95 (31611619544 / 32274748680)
+[0m Update state (0x61) downloading, progress: 98.39 (31755669416 / 32274748680)
+[0m Update state (0x61) downloading, progress: 98.60 (31823826856 / 32274748680)
+[0m Update state (0x61) downloading, progress: 98.68 (31848226728 / 32274748680)
+[0m Update state (0x61) downloading, progress: 98.73 (31863955368 / 32274748680)
+[0m Update state (0x61) downloading, progress: 98.76 (31874723688 / 32274748680)
+[0m Update state (0x61) downloading, progress: 98.79 (31882839976 / 32274748680)
+[0m Update state (0x61) downloading, progress: 98.81 (31890982824 / 32274748680)
+[0m Update state (0x61) downloading, progress: 99.27 (32037725464 / 32274748680)
+[0m Update state (0x61) downloading, progress: 99.39 (32078071048 / 32274748680)
+[0m Update state (0x61) downloading, progress: 100.00 (32274748680 / 32274748680)
+[0m Update state (0x61) downloading, progress: 100.00 (32274748680 / 32274748680)
+[0m Update state (0x81) verifying update, progress: 0.25 (80766659 / 32274748680)
+[0m Update state (0x81) verifying update, progress: 0.25 (80769157 / 32274748680)
+[0m Update state (0x81) verifying update, progress: 0.25 (80771769 / 32274748680)
+[0m Update state (0x81) verifying update, progress: 0.25 (80773508 / 32274748680)
+[0m Update state (0x81) verifying update, progress: 0.25 (80777143 / 32274748680)
+[0m Update state (0x81) verifying update, progress: 0.25 (80781330 / 32274748680)
+[0m Update state (0x81) verifying update, progress: 0.25 (81021119 / 32274748680)
+[0m Update state (0x81) verifying update, progress: 2.49 (804211420 / 32274748680)
+[0m Update state (0x81) verifying update, progress: 3.06 (987712220 / 32274748680)
+[0m Update state (0x81) verifying update, progress: 3.22 (1038043868 / 32274748680)
+[0m Update state (0x81) verifying update, progress: 3.28 (1059015388 / 32274748680)
+[0m Update state (0x81) verifying update, progress: 3.38 (1090472668 / 32274748680)
+[0m Update state (0x81) verifying update, progress: 3.44 (1111444188 / 32274748680)
+[0m Update state (0x81) verifying update, progress: 3.52 (1136610012 / 32274748680)
+[0m Update state (0x81) verifying update, progress: 3.61 (1163872988 / 32274748680)
+[0m Update state (0x81) verifying update, progress: 3.67 (1184844508 / 32274748680)
+[0m Update state (0x81) verifying update, progress: 3.74 (1207913180 / 32274748680)
+[0m Update state (0x81) verifying update, progress: 3.88 (1251953372 / 32274748680)
+[0m Update state (0x81) verifying update, progress: 5.78 (1865370416 / 32274748680)
+[0mIPC function call IClientAppManager::GetUpdateInfo took too long: 47 msec
+Success! App '2430930' fully installed.
+[0mDownloading Proton version 8-21... This might take a while
+--2025-04-11 01:56:14--  https://github.com/GloriousEggroll/proton-ge-custom/releases/download/GE-Proton8-21/GE-Proton8-21.tar.gz
+Resolving github.com (github.com)... 140.82.121.3
+Connecting to github.com (github.com)|140.82.121.3|:443... connected.
+HTTP request sent, awaiting response... 302 Found
+Location: https://objects.githubusercontent.com/github-production-release-asset-2e65be/161428437/3dc0fa04-6915-4df0-b7be-cd6ab8e3a88f?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=releaseassetproduction%2F20250410%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250410T235614Z&X-Amz-Expires=300&X-Amz-Signature=d89d862866bd7e29471ebc6174a9a853231d8a2761e7782c3d71001ed7d5ca4b&X-Amz-SignedHeaders=host&response-content-disposition=attachment%3B%20filename%3DGE-Proton8-21.tar.gz&response-content-type=application%2Foctet-stream [following]
+--2025-04-11 01:56:14--  https://objects.githubusercontent.com/github-production-release-asset-2e65be/161428437/3dc0fa04-6915-4df0-b7be-cd6ab8e3a88f?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=releaseassetproduction%2F20250410%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250410T235614Z&X-Amz-Expires=300&X-Amz-Signature=d89d862866bd7e29471ebc6174a9a853231d8a2761e7782c3d71001ed7d5ca4b&X-Amz-SignedHeaders=host&response-content-disposition=attachment%3B%20filename%3DGE-Proton8-21.tar.gz&response-content-type=application%2Foctet-stream
+Resolving objects.githubusercontent.com (objects.githubusercontent.com)... 185.199.108.133, 185.199.111.133, 185.199.109.133, ...
+Connecting to objects.githubusercontent.com (objects.githubusercontent.com)|185.199.108.133|:443... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 442501304 (422M) [application/octet-stream]
+Saving to: '/tmp/GE-Proton8-21.tar.gz'
+
+GE-Proton8-21.tar.g   0%[                    ]       0  --.-KB/s               GE-Proton8-21.tar.g   2%[                    ]  10.01M  40.2MB/s               GE-Proton8-21.tar.g   6%[>                   ]  28.31M  63.0MB/s               GE-Proton8-21.tar.g  10%[=>                  ]  44.58M  65.6MB/s               GE-Proton8-21.tar.g  16%[==>                 ]  67.71M  77.0MB/s               GE-Proton8-21.tar.g  18%[==>                 ]  78.05M  70.3MB/s               GE-Proton8-21.tar.g  21%[===>                ]  90.01M  68.3MB/s               GE-Proton8-21.tar.g  26%[====>               ] 110.08M  72.5MB/s               GE-Proton8-21.tar.g  30%[=====>              ] 126.80M  73.8MB/s               GE-Proton8-21.tar.g  32%[=====>              ] 136.50M  71.2MB/s               GE-Proton8-21.tar.g  36%[======>             ] 155.38M  73.4MB/s               GE-Proton8-21.tar.g  39%[======>             ] 168.01M  72.0MB/s               GE-Proton8-21.tar.g  42%[=======>            ] 180.51M  71.3MB/s               GE-Proton8-21.tar.g  45%[========>           ] 190.01M  68.4MB/s               GE-Proton8-21.tar.g  45%[========>           ] 190.57M  63.5MB/s    eta 4s     GE-Proton8-21.tar.g  46%[========>           ] 194.55M  60.7MB/s    eta 4s     GE-Proton8-21.tar.g  47%[========>           ] 200.01M  59.1MB/s    eta 4s     GE-Proton8-21.tar.g  51%[=========>          ] 215.41M  59.0MB/s    eta 4s     GE-Proton8-21.tar.g  53%[=========>          ] 223.96M  57.4MB/s    eta 4s     GE-Proton8-21.tar.g  54%[=========>          ] 230.01M  53.5MB/s    eta 3s     GE-Proton8-21.tar.g  58%[==========>         ] 246.00M  54.0MB/s    eta 3s     GE-Proton8-21.tar.g  60%[===========>        ] 255.10M  53.3MB/s    eta 3s     GE-Proton8-21.tar.g  65%[============>       ] 274.48M  54.5MB/s    eta 3s     GE-Proton8-21.tar.g  68%[============>       ] 288.08M  53.0MB/s    eta 3s     GE-Proton8-21.tar.g  70%[=============>      ] 296.75M  52.6MB/s    eta 2s     GE-Proton8-21.tar.g  72%[=============>      ] 304.02M  49.0MB/s    eta 2s     GE-Proton8-21.tar.g  74%[=============>      ] 312.33M  46.5MB/s    eta 2s     GE-Proton8-21.tar.g  75%[==============>     ] 320.01M  45.0MB/s    eta 2s     GE-Proton8-21.tar.g  79%[==============>     ] 335.84M  45.8MB/s    eta 2s     GE-Proton8-21.tar.g  81%[===============>    ] 345.24M  47.1MB/s    eta 1s     GE-Proton8-21.tar.g  86%[================>   ] 364.86M  52.2MB/s    eta 1s     GE-Proton8-21.tar.g  90%[=================>  ] 384.02M  57.7MB/s    eta 1s     GE-Proton8-21.tar.g  93%[=================>  ] 393.35M  58.6MB/s    eta 1s     GE-Proton8-21.tar.g  97%[==================> ] 412.43M  59.9MB/s    eta 1s     GE-Proton8-21.tar.g 100%[===================>] 422.00M  62.7MB/s    in 7.0s    
+
+2025-04-11 01:56:22 (60.3 MB/s) - '/tmp/GE-Proton8-21.tar.gz' saved [442501304/442501304]
+
+Download finished, comparing checksums...
+/tmp/GE-Proton8-21.tar.gz: OK
+Starting the ARK: Survival Ascended dedicated server...
+Start parameters: TheIsland_WP?listen?Port=7780?RCONPort=27023?RCONEnabled=True -UseDynamicConfig -WinLiveMaxPlayers=10 -clusterid=27478b61-c26a-44bf-8bac-18a30ca5b4ec -ClusterDirOverride="/home/gameserver/cluster-shared" -mods= 
+Proton: Upgrading prefix from None to GE-Proton8-21 (/home/gameserver/server-files/steamapps/compatdata/2430930/)
+fsync: up and running.
+Failed to read /etc/machine-id, error Invalid argument.
+wine: RLIMIT_NICE is <= 20, unable to use setpriority safely

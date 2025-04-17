@@ -1,77 +1,64 @@
-const Rcon = require('rcon');
+/**
+ * @fileoverview Service specifically for sending RCON commands to ARK servers,
+ * by leveraging the dockerService to execute commands inside the container.
+ * @version 3.0.0 Refactored to use dockerService.executeCommandInContainer
+ */
 
-/*=======================================================================
- *                      RCON CONNECTION & COMMANDS
- *======================================================================*/
+// Importe SEULEMENT la fonction nécessaire de dockerService
+const { executeCommandInContainer } = require('./dockerService');
+
+const ASA_CTRL_PATH = "asa-ctrl"; // Ajuster si nécessaire
 
 /**
- * Connects to the Ark ASA server via RCON protocol.
- * 
- * @param {string} host - IP address of the Ark ASA server.
- * @param {number} port - RCON port of the server.
- * @param {string} password - RCON password.
- * @returns {Promise<Rcon>} - Connected Rcon instance.
+ * Sends an RCON command via 'asa-ctrl rcon --exec'.
+ * @param {string} serverName - The logical name of the server.
+ * @param {string} command - The RCON command string (e.g., "ListPlayers").
+ * @returns {Promise<string>} A promise resolving to the command's output (stdout).
+ * @throws {Error} If the command execution fails.
  */
-function connectRcon(host, port, password) {
-    return new Promise((resolve, reject) => {
-        const client = new Rcon(host, port, password);
+async function sendRconCommand(serverName, command) {
+    const containerName = `ARK-ASA-${serverName}`;
+    // ===> CORRECTION: Ajout de --exec <===
+    const commandArray = [ASA_CTRL_PATH, "rcon", "--exec", command];
+    const user = 'gameserver';
+    // ===> CORRECTION: Spécifier TTY=true car la commande user l'utilise <===
+    const useTty = true;
 
-        client.on('auth', () => resolve(client));
-        client.on('error', (err) => reject(err));
+    console.log(`[RCON Service][${serverName}] Requesting dockerService to execute: ${commandArray.join(' ')} (TTY: ${useTty})`);
 
-        client.connect();
-    });
-}
-
-/**
- * Retrieves the number of connected players on an Ark ASA server via RCON.
- * 
- * @param {string} host - IP address of the server.
- * @param {number} port - RCON port.
- * @param {string} password - RCON password.
- * @returns {Promise<number>} - Number of connected players.
- */
-async function getPlayersCount(host, port, password) {
     try {
-        const client = await connectRcon(host, port, password);
-        return new Promise((resolve, reject) => {
-            client.send('listplayers', (response) => {
-                client.disconnect();
-                const match = response.match(/\d+ players?/);
-                resolve(match ? parseInt(match[0]) : 0);
-            });
-        });
+        // Appelle la fonction centralisée avec l'option TTY
+        const result = await executeCommandInContainer(containerName, commandArray, user, useTty);
+        return result;
     } catch (error) {
-        console.error(`RCON Error: ${error.message}`);
-        return 0;
+        console.error(`❌ [RCON Service][${serverName}] Failed to send RCON command "${command}" via dockerService:`, error.message);
+        throw error; // Propager l'erreur
     }
 }
 
-/**
- * Sends a custom RCON command to the Ark ASA server.
- * 
- * @param {string} host - IP address of the server.
- * @param {number} port - RCON port.
- * @param {string} password - RCON password.
- * @param {string} command - Command to execute.
- * @returns {Promise<string>} - Server response.
- */
-async function sendRconCommand(host, port, password, command) {
+// getPlayersCount utilise maintenant implicitement la bonne structure via sendRconCommand
+async function getPlayersCount(serverName) {
     try {
-        const client = await connectRcon(host, port, password);
-        return new Promise((resolve, reject) => {
-            client.send(command, (response) => {
-                client.disconnect();
-                resolve(response);
-            });
-        });
+        // ... (le code de getPlayersCount reste le même, il appelle le sendRconCommand corrigé) ...
+        // Retourne playerCount en cas de succès, null en cas d'échec (comme défini précédemment)
+        console.debug(`[RCON Service][${serverName}] Executing ListPlayers for liveness check...`);
+        const response = await sendRconCommand(serverName, "ListPlayers"); // Appelle la version corrigée
+        console.debug(`[RCON Service][${serverName}] ListPlayers raw response:\n${response}`);
+        const trimmedResponse = response.trim();
+        if (!trimmedResponse || trimmedResponse.toLowerCase().includes("no players connected")) { return 0; }
+        const lines = trimmedResponse.split('\n');
+        const playerLines = lines.filter(line => /^\d+\.\s/.test(line.trim()));
+        const playerCount = playerLines.length;
+        console.debug(`[RCON Service][${serverName}] getPlayersCount: Detected ${playerCount} players.`);
+        return playerCount;
     } catch (error) {
-        console.error(`RCON Error: ${error.message}`);
-        return 'Error executing command';
+         console.warn(`[RCON Service][${serverName}] ListPlayers failed for liveness check: ${error.message}`);
+         return null; // Retourne null en cas d'échec de sendRconCommand
     }
 }
+
 
 module.exports = {
-    getPlayersCount,
     sendRconCommand,
+    getPlayersCount // Exporte la nouvelle fonction
 };

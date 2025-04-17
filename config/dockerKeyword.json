@@ -1,87 +1,100 @@
-[
+{
+  "description": "Configuration pour le suivi des étapes de démarrage du container Docker du serveur ARK: Survival Ascended. Basé sur l'analyse du log 'docker.txt' fourni. Ce fichier définit des patterns (mots-clés ou expressions régulières) à rechercher dans le log pour afficher un statut clair à l'utilisateur. Il couvre la phase de préparation du container (téléchargements, installations via SteamCMD et Proton) jusqu'au lancement de la commande du serveur ARK. L'étape marquée 'is_endpoint: true' signale la fin de cette phase de log.",
+  "monitoring_stages": [
     {
-      "keyword": "Redirecting stderr to",
-      "state": "Redirecting standard error output"
+      "stage_name": "SteamCMD Init",
+      "description": "Détecte le démarrage de SteamCMD et la connexion réussie aux serveurs Steam.",
+      "type": "keyword",
+      "pattern": "Connecting anonymously to Steam Public... OK",
+      "display_message": "Démarrage SteamCMD et Connexion..."
     },
     {
-      "keyword": "Logging directory:",
-      "state": "Setting logging directory"
+      "stage_name": "ARK Download Start",
+      "description": "Détecte le début du téléchargement des fichiers du serveur ARK.",
+      "type": "keyword",
+      "pattern": "Update state (0x61) downloading",
+      "display_message": "Début du téléchargement ARK..."
     },
     {
-      "keyword": "Checking for available updates...",
-      "state": "Checking for Steam updates"
+      "stage_name": "ARK Download Progress",
+      "description": "Capture le pourcentage de progression du téléchargement ARK.",
+      "type": "regex",
+      "pattern": "Update state \\(0x61\\) downloading, progress: (\\d+\\.\\d+)",
+      "capture_group": 1,
+      "display_message": "Téléchargement ARK : {value}%"
     },
     {
-      "keyword": "Downloading update",
-      "state": "Downloading Steam update"
+      "stage_name": "ARK Download Complete",
+      "description": "Détecte spécifiquement l'atteinte des 100% du téléchargement ARK.",
+      "type": "regex",
+      "pattern": "downloading, progress: 100\\.00",
+      "display_message": "Téléchargement ARK : 100%"
     },
     {
-      "keyword": "Download complete.",
-      "state": "Steam update download completed"
+      "stage_name": "ARK Verification Start",
+      "description": "Détecte le début de la phase de vérification des fichiers ARK.",
+      "type": "keyword",
+      "pattern": "Update state (0x81) verifying update",
+      "display_message": "Vérification des fichiers ARK..."
     },
     {
-      "keyword": "Installing update...",
-      "state": "Installing Steam update"
+      "stage_name": "ARK Verification Progress",
+      "description": "Capture le pourcentage de progression de la vérification ARK.",
+      "type": "regex",
+      "pattern": "Update state \\(0x81\\) verifying update, progress: (\\d+\\.\\d+)",
+      "capture_group": 1,
+      "display_message": "Vérification ARK : {value}%"
     },
     {
-      "keyword": "Extracting package...",
-      "state": "Extracting Steam package"
+      "stage_name": "ARK Install OK",
+      "description": "Confirme la fin réussie de l'installation/vérification d'ARK.",
+      "type": "regex",
+      "pattern": "Success! App '.*' fully installed.",
+      "display_message": "Installation ARK terminée ! ✅"
     },
     {
-      "keyword": "Cleaning up...",
-      "state": "Cleaning up installation files"
+      "stage_name": "Proton Download Start",
+      "description": "Détecte le début du téléchargement de Proton GE.",
+      "type": "keyword",
+      "pattern": "Downloading Proton version",
+      "display_message": "Téléchargement de Proton GE..."
     },
     {
-      "keyword": "Update complete, launching Steamcmd...",
-      "state": "Update finished, launching SteamCMD"
+      "stage_name": "Proton Download Progress",
+      "description": "Capture le pourcentage de progression du téléchargement Proton (via sortie wget/curl).",
+      "type": "regex",
+      "pattern": "(\\d+)%\\s*\\[=*>\\]",
+      "capture_group": 1,
+      "display_message": "Téléchargement Proton : {value}%"
     },
     {
-      "keyword": "Restarting steamcmd by request...",
-      "state": "SteamCMD restart triggered"
+      "stage_name": "Proton Download OK",
+      "description": "Confirme la fin réussie du téléchargement Proton et la validation du checksum.",
+      "type": "regex",
+      "pattern": "saved \\[[^\\]]+\\] OK",
+      "display_message": "Téléchargement Proton terminé ! ✅"
     },
     {
-      "keyword": "Verifying installation...",
-      "state": "Verifying SteamCMD installation"
+      "stage_name": "Proton Setup",
+      "description": "Détecte le début de la configuration du préfixe Proton/Wine.",
+      "type": "keyword",
+      "pattern": "Upgrading prefix from",
+      "display_message": "Configuration de Proton..."
     },
     {
-      "keyword": "Steam Console Client",
-      "state": "Launching Steam Console Client"
+      "stage_name": "ARK Server Launch Command",
+      "description": "Détecte le moment où le script lance la commande de démarrage du serveur ARK.",
+      "type": "keyword",
+      "pattern": "Starting the ARK: Survival Ascended dedicated server...",
+      "display_message": "Préparation au lancement du serveur ARK..."
     },
     {
-      "keyword": "Loading Steam API...OK",
-      "state": "Steam API successfully loaded"
-    },
-    {
-      "keyword": "Connecting anonymously to Steam Public...OK",
-      "state": "Connected to Steam Public servers"
-    },
-    {
-      "keyword": "Update state \\(0x5\\) verifying install, progress: (.*?) \\(",
-      "state": "Verifying Steam installation progress"
-    },
-    {
-      "keyword": "Success! App '(.*?)' fully installed.",
-      "state": "Game server application successfully installed"
-    },
-    {
-      "keyword": "Starting the ARK: Survival Ascended dedicated server...",
-      "state": "Starting ARK: Survival Ascended dedicated server"
-    },
-    {
-      "keyword": "Start parameters:",
-      "state": "Displaying ARK server start parameters"
-    },
-    {
-      "keyword": "fsync: up and running.",
-      "state": "Filesystem sync process started"
-    },
-    {
-      "keyword": "Failed to read /etc/machine-id",
-      "state": "Error reading machine ID"
-    },
-    {
-      "keyword": "wine: RLIMIT_NICE is <= 20, unable to use setpriority safely",
-      "state": "Wine process limitation detected"
+      "stage_name": "End Docker Stage / Handover",
+      "description": "Marque la fin de la phase de log suivie ici (préparation Docker) et le début de la phase de démarrage du serveur ARK lui-même (logs différents).",
+      "type": "keyword",
+      "pattern": "wine: RLIMIT_NICE is <= 20, unable to use setpriority safely",
+      "display_message": "Fin de la phase Docker. Tentative de démarrage du serveur ARK (voir logs du jeu)... 🚀",
+      "is_endpoint": true
     }
   ]
-  
+}

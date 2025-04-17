@@ -1,6 +1,4 @@
 {
-  "serverCheckInterval": 10000,
-  "webSocketPort": 8080,
   "SERVERS": [
     {
       "SERVER_NAME": "TheIsland",
